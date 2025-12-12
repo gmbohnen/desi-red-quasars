@@ -73,20 +73,3 @@ def retrieve_desi_spectra(query, output_fields, target_mask=None, format="polars
     
 
     return out
-
-
-
-
-
-
-
-
-    # if format == "polars":
-    #     from polars import DataFrame as pl_df
-    #     out = pl_df(spectra_results.data[1:])
-    # elif format == "pandas":
-    #     from pandas import DataFrame as pd_df
-    #     out = pd_df(spectra_results.data[1:])
-    # else:
-    #     from astropy.table import Table
-    #     out = Table(spectra_results)
