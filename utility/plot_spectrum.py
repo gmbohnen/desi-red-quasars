@@ -9,7 +9,11 @@ settings = {
         'xtick.top':True,
         'ytick.direction':'in', 
         'ytick.minor.visible':True,
-        'ytick.right':True
+        'ytick.right':True,
+        'xtick.major.size':6.0,
+        'xtick.minor.size':4.0,
+        'ytick.major.size':6.0,
+        'ytick.minor.size':4.0
     }
 
 color = "#f86588"
