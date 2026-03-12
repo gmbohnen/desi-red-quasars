@@ -1,0 +1,15 @@
+astro-datalab
+
+astropy
+
+matplotlib
+
+numpy
+
+pandas
+
+polars
+
+sparclclient
+
+python==3.10.19
