@@ -29,14 +29,14 @@ def retrieve_desi_spectra(query, output_fields, target_mask=None, format="polars
         Table in the specified format containing the columns specified in output_fields.
     '''
 
-    assert ("targetid" in query) or ("specid" in query), "'targetid' or 'specid' must be in the SELECT statement of the query to retrieve spectra."
+    assert ("targetid" in query) or ("specid" in query) or ("SELECT *" in query) or ("select *" in query), "'targetid' or 'specid' must be in the SELECT statement of the query to retrieve spectra."
 
     assert ("flux" in output_fields) and ("wavelength" in output_fields), "'flux' and 'wavelength' must be in output_fields to retrieve spectra."
 
     assert (format in ['polars', 'pandas', 'dict']), "'format must be one of {'polars', 'pandas', 'dict'}."
 
     if target_mask:
-        assert ("desi_target" in query), "To filter for targetmask categories, 'desi_target' must be in the SELECT statement."
+        assert ("desi_target" in query) or ("SELECT *" in query) or ("select *" in query), "To filter for targetmask categories, 'desi_target' must be in the SELECT statement."
 
         if len(target_mask) > 1:
             raise NotImplementedError("Filtering for more than one targetmask category is not implemented yet.")

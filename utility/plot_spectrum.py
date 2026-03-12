@@ -45,7 +45,7 @@ def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", add_smoothed=True
         plt.plot(lam, convolve(flux, Gaussian1DKernel(5)), linewidth=0.8, color="black", label="smoothed")
 
     plt.title(title)
-    plt.xlabel(r"$\lambda$ [\AA]")
+    plt.xlabel(r"$\lambda$ [$\AA$]")
     plt.ylabel(r"$F_{\lambda}~[10^{-17}~ergs~s^{-1}~cm^{-2}~{\AA}^{-1}]$")
     plt.legend(loc="lower right")
 
