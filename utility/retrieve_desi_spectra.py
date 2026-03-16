@@ -39,7 +39,7 @@ def retrieve_desi_spectra(query, output_fields, target_mask=None, format="polars
         assert ("desi_target" in query) or ("SELECT *" in query) or ("select *" in query), "To filter for targetmask categories, 'desi_target' must be in the SELECT statement."
 
         if len(target_mask) > 1:
-            raise NotImplementedError("Filtering for more than one targetmask category is not implemented yet.")
+            raise NotImplementedError("Filtering for more than one targetmask category is currently not implemented.")
 
 
     # retrieve data matching the query
