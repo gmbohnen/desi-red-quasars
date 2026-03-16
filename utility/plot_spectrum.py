@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from astropy.convolution import convolve, Gaussian1DKernel
+from colors import pink
 
 
 settings = {
@@ -16,10 +17,8 @@ settings = {
         'ytick.minor.size':4.0
     }
 
-color = "#f86588"
 
-
-def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", add_smoothed=True):
+def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", add_smoothed=True, color=pink):
     '''
     Plot spectrum, optionally smoothed spectrum on top of it.
 
