@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from astropy.convolution import convolve, Gaussian1DKernel
-from colors import pink
+from .my_colors import pink
 
 
 settings = {
