@@ -18,7 +18,7 @@ settings = {
     }
 
 
-def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", add_smoothed=True, color=pink):
+def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", line_lambda=None, line_label=None, add_smoothed=True, color=pink):
     '''
     Plot spectrum, optionally smoothed spectrum on top of it.
 
@@ -42,6 +42,9 @@ def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", add_smoothed=True
     
     if add_smoothed:
         plt.plot(lam, convolve(flux, Gaussian1DKernel(5)), linewidth=0.8, color="black", label="smoothed")
+
+    if line_lambda:
+        plt.axvline(line_lambda, label=line_label)
 
     plt.title(title)
     plt.xlabel(r"$\lambda$ [$\AA$]")
