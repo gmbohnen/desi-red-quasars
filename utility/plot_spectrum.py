@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from astropy.convolution import convolve, Gaussian1DKernel
+from matplotlib import rcParamsDefault
 from .my_colors import pink
 
 
@@ -52,3 +53,5 @@ def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", line_lambda=None,
     plt.legend(frameon=False)
 
     plt.show()
+
+    plt.rcParams.update(rcParamsDefault)
