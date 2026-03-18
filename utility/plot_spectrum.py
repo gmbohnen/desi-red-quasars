@@ -41,7 +41,7 @@ def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", line_lambda=None,
     plt.plot(lam, flux, linewidth=0.4, color=color, label="raw", alpha=0.7)
     
     if add_smoothed:
-        plt.plot(lam, convolve(flux, Gaussian1DKernel(5)), linewidth=0.8, color="black", label="smoothed")
+        plt.plot(lam, convolve(flux, Gaussian1DKernel(5)), linewidth=0.8, color="black", label="smoothed")   # 5 is value from datalab tutorial
 
     if line_lambda:
         plt.axvline(line_lambda, label=line_label)
