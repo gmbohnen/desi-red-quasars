@@ -18,7 +18,7 @@ settings = {
     }
 
 
-def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", line_lambda=None, line_label=None, add_smoothed=True, color=pink):
+def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", flux_label="raw", line_lambda=None, line_label=None, add_smoothed=True, color=pink, additional_flux=None, additional_flux_label=None, line_width_factor=1):
     '''
     Plot spectrum, optionally smoothed spectrum on top of it.
 
@@ -34,14 +34,19 @@ def plot_spectrum(lam, flux, title="DESI-DR1 galaxy spectrum", line_lambda=None,
         Specifies whether smoothed spectrum is added on top of raw spectrum.
     '''
 
+    assert additional_flux is None or not add_smoothed, "Can only have one of the two: additional_flux, add_smoothed"
+
     plt.rcParams.update(**settings)
 
     plt.subplots(figsize=(15,8))
 
-    plt.plot(lam, flux, linewidth=0.4, color=color, label="raw", alpha=0.7)
+    plt.plot(lam, flux, linewidth=0.4*line_width_factor, color=color, label=flux_label, alpha=0.7)
     
     if add_smoothed:
-        plt.plot(lam, convolve(flux, Gaussian1DKernel(5)), linewidth=0.8, color="black", label="smoothed")   # 5 is value from datalab tutorial
+        plt.plot(lam, convolve(flux, Gaussian1DKernel(5)), linewidth=0.8*line_width_factor, color="black", label="smoothed")   # 5 is value from datalab tutorial
+
+    if additional_flux is not None:
+        plt.plot(lam, additional_flux, linewidth=0.8*line_width_factor, color="black", label=additional_flux_label)
 
     if line_lambda:
         plt.axvline(line_lambda, label=line_label)
