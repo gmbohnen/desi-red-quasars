@@ -3,17 +3,17 @@ import numpy as np
 import warnings
 
 
-def remove_spikes(wave, flux, ivar=None, sigma_thresh=5.0, window=11):
+def remove_spikes(lam, flux, ivar=None, sigma_thresh=5.0, window=11):
     '''
     Detect and remove narrow spikes (cosmic rays / noise anomalies).
  
     A pixel is flagged as a spike if its flux deviates from the local median
-    by more than `sigma_thresh` * local MAD. Flagged pixels are replaced by
+    by more than `sigma_thresh` * local MAD (= median absolute deviation). Flagged pixels are replaced by
     linear interpolation from their neighbours.
  
     Parameters
     ----------
-    wave : array_like
+    lam : array_like
         Wavelength array (Å).
     flux : array_like
         Flux array (arbitrary units).
@@ -33,7 +33,7 @@ def remove_spikes(wave, flux, ivar=None, sigma_thresh=5.0, window=11):
     '''
 
     flux = np.array(flux, dtype=float)
-    wave = np.array(wave, dtype=float)
+    lam = np.array(lam, dtype=float)
     n = len(flux)
     spike_mask = np.zeros(n, dtype=bool)
  
@@ -53,7 +53,7 @@ def remove_spikes(wave, flux, ivar=None, sigma_thresh=5.0, window=11):
         med = np.median(neighbours)
         mad = np.median(np.abs(neighbours - med))
 
-        sigma = 1.4826 * mad  # MAD -> Gaussian sigma equivalent
+        sigma = 1.4826 * mad  # MAD*k is an estimator for sigma, where k is a scaling factor depending on the dstribution, 1.4826 for gaussian
 
         if sigma > 0 and np.abs(flux[i] - med) > sigma_thresh * sigma:
             spike_mask[i] = True
@@ -64,12 +64,12 @@ def remove_spikes(wave, flux, ivar=None, sigma_thresh=5.0, window=11):
     if spike_mask.any():
         good = ~spike_mask
 
-        if good.sum() < 2:
+        if good.sum() < 2:  # TODO: 2 is only the technical limit, might wanna raise this lol
             warnings.warn("Too many spikes — cannot interpolate reliably.")
             return flux_clean, spike_mask
 
-        interp_fn = interp1d(wave[good], flux[good], kind='linear', bounds_error=False, fill_value='extrapolate')
+        interp_fn = interp1d(lam[good], flux[good], kind='linear', bounds_error=False, fill_value='extrapolate')
         
-        flux_clean[spike_mask] = interp_fn(wave[spike_mask])
+        flux_clean[spike_mask] = interp_fn(lam[spike_mask])
  
     return flux_clean, spike_mask
