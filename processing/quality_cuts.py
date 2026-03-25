@@ -1,0 +1,89 @@
+from .parameters import continuum_windows, civ_region, max_powerlaw_slope, bal_sigma_threshold, min_emission_sigma
+import numpy as np
+
+
+def _estimate_noise(residual, wave, window=continuum_windows):
+    """Estimate noise from the scatter in continuum window residuals."""
+    mask = np.zeros(len(wave), dtype=bool)
+    for w0, w1 in window:
+        mask |= (np.array(wave) >= w0) & (np.array(wave) <= w1)
+    if mask.sum() < 5:
+        return np.std(residual)
+    return 1.4826 * np.median(np.abs(residual[mask] - np.median(residual[mask])))
+
+
+def quality_cuts(wave, flux, continuum, fit_result,
+                 civ_region=civ_region,
+                 max_slope=max_powerlaw_slope,
+                 bal_sigma=bal_sigma_threshold,
+                 min_emission_sigma=min_emission_sigma):
+    """
+    Apply the three quality cuts from the paper.
+ 
+    Parameters
+    ----------
+    wave : array_like
+        Rest-frame wavelength array.
+    flux : array_like
+        Spike-cleaned flux.
+    continuum : array_like
+        Best-fit continuum flux.
+    fit_result : lmfit ModelResult
+        Result from fit_continuum.
+    civ_region : (float, float)
+        Wavelength range of the CIV emission line.
+    max_slope : float
+        Maximum allowed |alpha| before the fit is considered unrealistic.
+    bal_sigma : float
+        Sigma threshold for broad absorption detection (negative value).
+    min_emission_sigma : float
+        Minimum sigma for a significant emission detection.
+ 
+    Returns
+    -------
+    rejected : bool
+        True if the spectrum fails any quality cut.
+    reason : str or None
+        Human-readable reason for rejection, or None if accepted.
+    flags : dict
+        Dict of individual flag values for inspection.
+    """
+    alpha = fit_result.best_values['alpha']
+    residual = np.array(flux) - np.array(continuum)
+    noise = _estimate_noise(residual, wave)
+ 
+    civ_mask = (np.array(wave) >= civ_region[0]) & \
+               (np.array(wave) <= civ_region[1])
+ 
+    flags = {}
+ 
+    # Cut 1: Unrealistically steep continuum
+    flags['steep_continuum'] = abs(alpha) > max_slope
+    if flags['steep_continuum']:
+        return True, f"Continuum too steep (alpha={alpha:.2f})", flags
+ 
+    # Cut 2: Broad absorption at CIV wavelengths
+    if civ_mask.sum() > 0 and noise > 0:
+        med_residual_civ = np.median(residual[civ_mask])
+        bal_detection = med_residual_civ / noise
+        flags['bal_detected'] = bal_detection < bal_sigma
+        if flags['bal_detected']:
+            return True, \
+                f"Broad absorption detected at CIV (residual S/N={bal_detection:.1f})", \
+                flags
+    else:
+        flags['bal_detected'] = False
+ 
+    # Cut 3: No significant emission above continuum
+    if civ_mask.sum() > 0 and noise > 0:
+        peak_emission = np.max(residual[civ_mask]) / noise
+        flags['no_emission'] = peak_emission < min_emission_sigma
+        if flags['no_emission']:
+            return True, \
+                f"No significant CIV emission (peak S/N={peak_emission:.1f})", \
+                flags
+    else:
+        flags['no_emission'] = True
+        return True, "CIV region not covered by spectrum", flags
+ 
+    return False, None, flags
