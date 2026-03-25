@@ -1,28 +1,32 @@
-from .parameters import continuum_windows, civ_region, max_powerlaw_slope, bal_sigma_threshold, min_emission_sigma
+from parameters import continuum_windows, civ_region, max_powerlaw_slope, bal_sigma_threshold, min_emission_sigma
 import numpy as np
 
 
-def _estimate_noise(residual, wave, window=continuum_windows):
-    """Estimate noise from the scatter in continuum window residuals."""
-    mask = np.zeros(len(wave), dtype=bool)
+def _estimate_noise(residual, lam, window=continuum_windows):
+    '''Estimate noise from the scatter in continuum window residuals.'''
+
+    mask = np.zeros(len(lam), dtype=bool)
+
     for w0, w1 in window:
-        mask |= (np.array(wave) >= w0) & (np.array(wave) <= w1)
+        mask |= (np.array(lam) >= w0) & (np.array(lam) <= w1)
+
     if mask.sum() < 5:
         return np.std(residual)
+
     return 1.4826 * np.median(np.abs(residual[mask] - np.median(residual[mask])))
 
 
-def quality_cuts(wave, flux, continuum, fit_result,
+def quality_cuts(lam, flux, continuum, fit_result,
                  civ_region=civ_region,
                  max_slope=max_powerlaw_slope,
                  bal_sigma=bal_sigma_threshold,
                  min_emission_sigma=min_emission_sigma):
-    """
+    '''
     Apply the three quality cuts from the paper.
  
     Parameters
     ----------
-    wave : array_like
+    lam : array_like
         Rest-frame wavelength array.
     flux : array_like
         Spike-cleaned flux.
@@ -47,13 +51,14 @@ def quality_cuts(wave, flux, continuum, fit_result,
         Human-readable reason for rejection, or None if accepted.
     flags : dict
         Dict of individual flag values for inspection.
-    """
+    '''
+    
     alpha = fit_result.best_values['alpha']
     residual = np.array(flux) - np.array(continuum)
-    noise = _estimate_noise(residual, wave)
+    noise = _estimate_noise(residual, lam)
  
-    civ_mask = (np.array(wave) >= civ_region[0]) & \
-               (np.array(wave) <= civ_region[1])
+    civ_mask = (np.array(lam) >= civ_region[0]) & \
+               (np.array(lam) <= civ_region[1])
  
     flags = {}
  

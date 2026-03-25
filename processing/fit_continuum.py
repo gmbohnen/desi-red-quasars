@@ -4,19 +4,19 @@ import numpy as np
 
 
 def _powerlaw(x, amplitude, alpha):
-    """F(λ) = amplitude * (λ / λ_ref) ^ alpha"""
+    '''F(λ) = amplitude * (λ / λ_ref) ^ alpha'''
     return amplitude * (x ** alpha)
  
  
-def fit_continuum(wave, flux, ivar=None,
+def fit_continuum(lam, flux, ivar=None,
                   windows=continuum_windows,
                   lambda_ref=1700.0):
-    """
+    '''
     Fit a power-law continuum using median fluxes in emission-free windows.
  
     Parameters
     ----------
-    wave : array_like
+    lam : array_like
         Rest-frame wavelength array (Å).
     flux : array_like
         Flux array (spike-cleaned).
@@ -32,20 +32,20 @@ def fit_continuum(wave, flux, ivar=None,
     result : lmfit ModelResult
         Full lmfit fit result (contains best-fit params, uncertainties, etc.)
     continuum : ndarray
-        Best-fit continuum evaluated at every wavelength in `wave`.
+        Best-fit continuum evaluated at every wavelength in `lam`.
     window_mask : ndarray of bool
         True for pixels used in the fit.
-    """
-    wave = np.array(wave, dtype=float)
+    '''
+    lam = np.array(lam, dtype=float)
     flux = np.array(flux, dtype=float)
  
     # Build window mask and compute per-window median flux
-    window_waves = []
+    window_lams = []
     window_fluxes = []
     window_weights = []
  
     for w0, w1 in windows:
-        mask = (wave >= w0) & (wave <= w1) & np.isfinite(flux)
+        mask = (lam >= w0) & (lam <= w1) & np.isfinite(flux)
         if mask.sum() < 3:
             continue
         wc = 0.5 * (w0 + w1)          # window centre wavelength
@@ -55,15 +55,15 @@ def fit_continuum(wave, flux, ivar=None,
             weight = np.sqrt(max(med_ivar, 0))
         else:
             weight = 1.0
-        window_waves.append(wc)
+        window_lams.append(wc)
         window_fluxes.append(med_flux)
         window_weights.append(weight)
  
-    if len(window_waves) < 2:
+    if len(window_lams) < 2:
         raise ValueError("Fewer than 2 continuum windows have data — "
                          "cannot fit continuum.")
  
-    xdata = np.array(window_waves) / lambda_ref
+    xdata = np.array(window_lams) / lambda_ref
     ydata = np.array(window_fluxes)
     weights = np.array(window_weights)
     if weights.sum() == 0:
@@ -80,11 +80,11 @@ def fit_continuum(wave, flux, ivar=None,
  
     # Evaluate continuum across the full spectrum
     continuum = result.best_values['amplitude'] * \
-                ((wave / lambda_ref) ** result.best_values['alpha'])
+                ((lam / lambda_ref) ** result.best_values['alpha'])
  
     # Full-spectrum window mask (for plotting)
-    window_mask = np.zeros(len(wave), dtype=bool)
+    window_mask = np.zeros(len(lam), dtype=bool)
     for w0, w1 in windows:
-        window_mask |= (wave >= w0) & (wave <= w1)
+        window_mask |= (lam >= w0) & (lam <= w1)
  
     return result, continuum, window_mask
