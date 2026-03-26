@@ -10,7 +10,7 @@ def _powerlaw(x, amplitude, alpha):
  
 def fit_continuum(lam, flux, ivar=None,
                   windows=continuum_windows,
-                  lambda_ref=1700.0):
+                  lambda_ref=1700.0):  # TODO whatever is a reasonable value for that
     '''
     Fit a power-law continuum using median fluxes in emission-free windows.
  
@@ -60,9 +60,8 @@ def fit_continuum(lam, flux, ivar=None,
         window_weights.append(weight)
  
     if len(window_lams) < 2:
-        raise ValueError("Fewer than 2 continuum windows have data — "
-                         "cannot fit continuum.")
- 
+        raise ValueError("Fewer than 2 continuum windows have data; cannot fit continuum.")
+
     xdata = np.array(window_lams) / lambda_ref
     ydata = np.array(window_fluxes)
     weights = np.array(window_weights)
@@ -75,16 +74,15 @@ def fit_continuum(lam, flux, ivar=None,
         amplitude=dict(value=np.median(ydata), min=0),
         alpha=dict(value=-1.5, min=-10, max=10),
     )
- 
+
     result = plaw_model.fit(ydata, params, x=xdata, weights=weights)
  
     # Evaluate continuum across the full spectrum
-    continuum = result.best_values['amplitude'] * \
-                ((lam / lambda_ref) ** result.best_values['alpha'])
- 
+    continuum = result.best_values['amplitude'] * ((lam / lambda_ref) ** result.best_values['alpha'])
+
     # Full-spectrum window mask (for plotting)
     window_mask = np.zeros(len(lam), dtype=bool)
     for w0, w1 in windows:
         window_mask |= (lam >= w0) & (lam <= w1)
- 
+
     return result, continuum, window_mask

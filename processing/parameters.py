@@ -1,3 +1,4 @@
+# TODO check all these
 continuum_windows = [
     (1425, 1470),   # blue side of CIV, relatively clean
     (1680, 1710),   # red side of CIV, between HeII and CIII]

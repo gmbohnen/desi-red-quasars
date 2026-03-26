@@ -13,7 +13,7 @@ def _estimate_noise(residual, lam, window=continuum_windows):
     if mask.sum() < 5:
         return np.std(residual)
 
-    return 1.4826 * np.median(np.abs(residual[mask] - np.median(residual[mask])))
+    return 1.4826 * np.median(np.abs(residual[mask] - np.median(residual[mask])))  # MAD as sigma estimator
 
 
 def quality_cuts(lam, flux, continuum, fit_result,
@@ -22,7 +22,7 @@ def quality_cuts(lam, flux, continuum, fit_result,
                  bal_sigma=bal_sigma_threshold,
                  min_emission_sigma=min_emission_sigma):
     '''
-    Apply the three quality cuts from the paper.
+    Apply the three quality cuts from Hamann.
  
     Parameters
     ----------
@@ -74,8 +74,7 @@ def quality_cuts(lam, flux, continuum, fit_result,
         flags['bal_detected'] = bal_detection < bal_sigma
         if flags['bal_detected']:
             return True, \
-                f"Broad absorption detected at CIV (residual S/N={bal_detection:.1f})", \
-                flags
+                f"Broad absorption detected at CIV (residual S/N={bal_detection:.1f})", flags
     else:
         flags['bal_detected'] = False
  
@@ -85,8 +84,7 @@ def quality_cuts(lam, flux, continuum, fit_result,
         flags['no_emission'] = peak_emission < min_emission_sigma
         if flags['no_emission']:
             return True, \
-                f"No significant CIV emission (peak S/N={peak_emission:.1f})", \
-                flags
+                f"No significant CIV emission (peak S/N={peak_emission:.1f})", flags
     else:
         flags['no_emission'] = True
         return True, "CIV region not covered by spectrum", flags
