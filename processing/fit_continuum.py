@@ -1,4 +1,4 @@
-from .parameters import continuum_windows
+from .parameters import CONTINUUM_WINDOWS
 from lmfit import Model
 import numpy as np
 
@@ -9,7 +9,7 @@ def _powerlaw(x, amplitude, alpha):
  
  
 def fit_continuum(lam, flux, ivar=None,
-                  windows=continuum_windows,
+                  windows=CONTINUUM_WINDOWS,
                   lambda_ref=1700.0):  # TODO whatever is a reasonable value for that
     '''
     Fit a power-law continuum using median fluxes in emission-free windows.

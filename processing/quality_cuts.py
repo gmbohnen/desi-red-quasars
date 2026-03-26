@@ -1,8 +1,8 @@
-from parameters import continuum_windows, civ_region, max_powerlaw_slope, bal_sigma_threshold, min_emission_sigma
+from .parameters import CONTINUUM_WINDOWS, CIV_REGION, MAX_POWERLAW_SLOPE, BAL_SIGMA_THRESHOLD, MIN_EMISSION_SIGMA
 import numpy as np
 
 
-def _estimate_noise(residual, lam, window=continuum_windows):
+def _estimate_noise(residual, lam, window=CONTINUUM_WINDOWS):
     '''Estimate noise from the scatter in continuum window residuals.'''
 
     mask = np.zeros(len(lam), dtype=bool)
@@ -17,10 +17,10 @@ def _estimate_noise(residual, lam, window=continuum_windows):
 
 
 def quality_cuts(lam, flux, continuum, fit_result,
-                 civ_region=civ_region,
-                 max_slope=max_powerlaw_slope,
-                 bal_sigma=bal_sigma_threshold,
-                 min_emission_sigma=min_emission_sigma):
+                 civ_region=CIV_REGION,
+                 max_slope=MAX_POWERLAW_SLOPE,
+                 bal_sigma=BAL_SIGMA_THRESHOLD,
+                 min_emission_sigma=MIN_EMISSION_SIGMA):
     '''
     Apply the three quality cuts from Hamann.
  
