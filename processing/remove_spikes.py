@@ -6,11 +6,11 @@ import warnings
 def remove_spikes(lam, flux, ivar=None, sigma_thresh=5.0, window=11):
     '''
     Detect and remove narrow spikes (cosmic rays / noise anomalies).
- 
+
     A pixel is flagged as a spike if its flux deviates from the local median
     by more than `sigma_thresh` * local MAD (= median absolute deviation). Flagged pixels are replaced by
     linear interpolation from their neighbours.
- 
+
     Parameters
     ----------
     lam : array_like
@@ -23,7 +23,7 @@ def remove_spikes(lam, flux, ivar=None, sigma_thresh=5.0, window=11):
         Number of sigma above/below the local median to flag a spike.
     window : int
         Half-width (in pixels) of the local median filter window.
- 
+
     Returns
     -------
     flux_clean : ndarray
@@ -36,11 +36,11 @@ def remove_spikes(lam, flux, ivar=None, sigma_thresh=5.0, window=11):
     lam = np.array(lam, dtype=float)
     n = len(flux)
     spike_mask = np.zeros(n, dtype=bool)
- 
+
     # Flag zero/negative ivar pixels
     if ivar is not None:
         spike_mask |= (np.array(ivar) <= 0)
- 
+
     # Rolling median and MAD-based sigma clipping
     for i in range(n):
         lo = max(0, i - window)
@@ -57,7 +57,7 @@ def remove_spikes(lam, flux, ivar=None, sigma_thresh=5.0, window=11):
 
         if sigma > 0 and np.abs(flux[i] - med) > sigma_thresh * sigma:
             spike_mask[i] = True
- 
+
     # Interpolate over flagged pixels using clean neighbours
     flux_clean = flux.copy()
 
@@ -71,5 +71,5 @@ def remove_spikes(lam, flux, ivar=None, sigma_thresh=5.0, window=11):
         interp_fn = interp1d(lam[good], flux[good], kind='linear', bounds_error=False, fill_value='extrapolate')
         
         flux_clean[spike_mask] = interp_fn(lam[spike_mask])
- 
+
     return flux_clean, spike_mask

@@ -6,14 +6,14 @@ import numpy as np
 def _powerlaw(x, amplitude, alpha):
     '''F(λ) = amplitude * (λ / λ_ref) ^ alpha'''
     return amplitude * (x ** alpha)
- 
- 
+
+
 def fit_continuum(lam, flux, ivar=None,
                   windows=CONTINUUM_WINDOWS,
                   lambda_ref=1700.0):  # TODO whatever is a reasonable value for that
     '''
     Fit a power-law continuum using median fluxes in emission-free windows.
- 
+
     Parameters
     ----------
     lam : array_like
@@ -26,7 +26,7 @@ def fit_continuum(lam, flux, ivar=None,
         Rest-frame wavelength windows free of emission lines.
     lambda_ref : float
         Reference wavelength for the power law (normalisation pivot).
- 
+
     Returns
     -------
     result : lmfit ModelResult
@@ -38,12 +38,12 @@ def fit_continuum(lam, flux, ivar=None,
     '''
     lam = np.array(lam, dtype=float)
     flux = np.array(flux, dtype=float)
- 
+
     # Build window mask and compute per-window median flux
     window_lams = []
     window_fluxes = []
     window_weights = []
- 
+
     for w0, w1 in windows:
         mask = (lam >= w0) & (lam <= w1) & np.isfinite(flux)
         if mask.sum() < 3:
@@ -58,7 +58,7 @@ def fit_continuum(lam, flux, ivar=None,
         window_lams.append(wc)
         window_fluxes.append(med_flux)
         window_weights.append(weight)
- 
+
     if len(window_lams) < 2:
         raise ValueError("Fewer than 2 continuum windows have data; cannot fit continuum.")
 
@@ -67,7 +67,7 @@ def fit_continuum(lam, flux, ivar=None,
     weights = np.array(window_weights)
     if weights.sum() == 0:
         weights = np.ones_like(weights)
- 
+
     # lmfit power-law model
     plaw_model = Model(_powerlaw)
     params = plaw_model.make_params(
@@ -76,7 +76,7 @@ def fit_continuum(lam, flux, ivar=None,
     )
 
     result = plaw_model.fit(ydata, params, x=xdata, weights=weights)
- 
+
     # Evaluate continuum across the full spectrum
     continuum = result.best_values['amplitude'] * ((lam / lambda_ref) ** result.best_values['alpha'])
 
@@ -85,4 +85,4 @@ def fit_continuum(lam, flux, ivar=None,
     for w0, w1 in windows:
         window_mask |= (lam >= w0) & (lam <= w1)
 
-    return result, continuum, window_mask
+    return result, continuum, window_mask   

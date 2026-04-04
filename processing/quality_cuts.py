@@ -23,7 +23,7 @@ def quality_cuts(lam, flux, continuum, fit_result,
                  min_emission_sigma=MIN_EMISSION_SIGMA):
     '''
     Apply the three quality cuts from Hamann.
- 
+
     Parameters
     ----------
     lam : array_like
@@ -42,7 +42,7 @@ def quality_cuts(lam, flux, continuum, fit_result,
         Sigma threshold for broad absorption detection (negative value).
     min_emission_sigma : float
         Minimum sigma for a significant emission detection.
- 
+
     Returns
     -------
     rejected : bool
@@ -56,17 +56,17 @@ def quality_cuts(lam, flux, continuum, fit_result,
     alpha = fit_result.best_values['alpha']
     residual = np.array(flux) - np.array(continuum)
     noise = _estimate_noise(residual, lam)
- 
+
     civ_mask = (np.array(lam) >= civ_region[0]) & \
                (np.array(lam) <= civ_region[1])
- 
+
     flags = {}
- 
+
     # Cut 1: Unrealistically steep continuum
     flags['steep_continuum'] = abs(alpha) > max_slope
     if flags['steep_continuum']:
         return True, f"Continuum too steep (alpha={alpha:.2f})", flags
- 
+
     # Cut 2: Broad absorption at CIV wavelengths
     if civ_mask.sum() > 0 and noise > 0:
         med_residual_civ = np.median(residual[civ_mask])
@@ -77,7 +77,7 @@ def quality_cuts(lam, flux, continuum, fit_result,
                 f"Broad absorption detected at CIV (residual S/N={bal_detection:.1f})", flags
     else:
         flags['bal_detected'] = False
- 
+
     # Cut 3: No significant emission above continuum
     if civ_mask.sum() > 0 and noise > 0:
         peak_emission = np.max(residual[civ_mask]) / noise
@@ -88,5 +88,5 @@ def quality_cuts(lam, flux, continuum, fit_result,
     else:
         flags['no_emission'] = True
         return True, "CIV region not covered by spectrum", flags
- 
+
     return False, None, flags
