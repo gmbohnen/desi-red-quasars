@@ -14,7 +14,8 @@ settings = {
         'xtick.major.size':6.0,
         'xtick.minor.size':4.0,
         'ytick.major.size':6.0,
-        'ytick.minor.size':4.0
+        'ytick.minor.size':4.0,
+        'legend.frameon':False
     }
 
 
@@ -69,7 +70,7 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
     plt.title(title)
     plt.xlabel(r"$\lambda$ [$\AA$]")
     plt.ylabel(r"$F_{\lambda}~[10^{-17}~ergs~s^{-1}~cm^{-2}~{\AA}^{-1}]$")
-    plt.legend(frameon=False)
+    plt.legend()
 
     plt.show()
 
