@@ -1,4 +1,5 @@
 def adjust_redshift(z, wavelength, flux, ivar=None):
+    # from astro datalab github, DESI SDSS comparison notebook
     wavelength = wavelength/(1+z)
     flux = flux*(1+z)
     
