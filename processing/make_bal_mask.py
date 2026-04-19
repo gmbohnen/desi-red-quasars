@@ -19,7 +19,8 @@ def make_bal_mask(lam, flux_sub, ivar=None, sigma_thresh=BAL_SIGMA_MASK, min_wid
     in_run  = False
     run_start = 0
 
-    # check if the index is below the threshold (i.e. absorption happens), if it is, start a run (i.e. an absorption section). continue until next index that is not below, then check if section is long (broad) enough to be a BAL, if yes add to bal_mask, of not, continue
+    # check if the index is below the threshold (i.e. absorption happens), if it is, start a run (i.e. an absorption section)
+    # continue until next index that is not below, then check if section is long (broad) enough to be a BAL, if yes add to bal_mask, of not, continue
     for i in range(len(lam)):
         if below[i] and not in_run:
             in_run = True
@@ -28,6 +29,7 @@ def make_bal_mask(lam, flux_sub, ivar=None, sigma_thresh=BAL_SIGMA_MASK, min_wid
             in_run = False
             if lam[i - 1] - lam[run_start] >= min_width_aa:
                 bal_mask[run_start:i] = True
+
     if in_run and lam[-1] - lam[run_start] >= min_width_aa:
         bal_mask[run_start:] = True
  

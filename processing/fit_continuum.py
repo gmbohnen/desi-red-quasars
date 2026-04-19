@@ -80,7 +80,7 @@ def fit_continuum(lam, flux, ivar=None,
     # Evaluate continuum across the full spectrum
     continuum = result.best_values['amplitude'] * ((lam / lambda_ref) ** result.best_values['alpha'])
 
-    # Full-spectrum window mask (for plotting)
+    # full spectrum window mask (for plotting)
     window_mask = np.zeros(len(lam), dtype=bool)
     for w0, w1 in windows:
         window_mask |= (lam >= w0) & (lam <= w1)
