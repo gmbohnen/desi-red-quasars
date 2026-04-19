@@ -19,7 +19,7 @@ settings = {
     }
 
 
-def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line_lambda=None, line_label=None, additional_flux=None, additional_flux_label=None, color=pink, line_width_factor=1):
+def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line_lambda=None, line_label=None, additional_lam=None, additional_flux=None, additional_flux_label=None, color=pink, line_width_factor=1):
     '''
     Plot spectrum, optionally smoothed spectrum on top of it.
 
@@ -39,8 +39,10 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
         Passing values adds vertical lines.
     line_label : list of float or None, optional
         Specify labels of lines.
+    additional_lam : list of float or None, optional
+        Passing values adds a secondary spectrum on top of the other. Cannot be used with add_smoothed=True. Can be None if it is equivalent to primary lam.
     additional_flux : list of float or None, optional
-        Passing values adds a secondary spectrum on top of the other. Cannot be used with add_smoothed=True.
+        Passing values adds a secondary spectrum on top of the other. Cannot be used with add_smoothed=True. Uses lam if additional_lam is not specified.
     additional_flux_label : str or None, optional
         Specify label of additional flux.
     color : str, optional
@@ -61,7 +63,10 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
         plt.plot(lam, convolve(flux, Gaussian1DKernel(5)), linewidth=0.8*line_width_factor, color="black", label="smoothed")   # 5 is value from datalab tutorial
 
     if additional_flux is not None:
-        plt.plot(lam, additional_flux, linewidth=0.8*line_width_factor, color="black", label=additional_flux_label)
+        if additional_lam is not None:
+            plt.plot(additional_lam, additional_flux, linewidth=0.8*line_width_factor, color="black", label=additional_flux_label)
+        else:
+            plt.plot(lam, additional_flux, linewidth=0.8*line_width_factor, color="black", label=additional_flux_label)
 
     if line_lambda:
         for i, elem in enumerate(line_lambda):
