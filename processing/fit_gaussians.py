@@ -87,7 +87,7 @@ def fit_two_gaussians(lam, flux_sub, ivar=None, mask=None, single_result=None, w
     params.add('sigma_w', expr='width_ratio * sigma_c')
 
     # core
-    params.add('amp_c', value=amp0 * 0.7, min=0)
+    params.add('amp_c', value=amp0 * 0.8, min=0)
     params.add('delta_cen', value=0.0, min=-hw, max=hw)
     params.add('cen_c', expr='cen_w + delta_cen')
 
