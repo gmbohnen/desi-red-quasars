@@ -19,7 +19,7 @@ settings = {
     }
 
 
-def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line_lambda=None, line_label=None, additional_lam=None, additional_flux=None, additional_flux_label=None, additional_flux_color=palette_dark, line_width_factor=1):
+def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line_lambda=None, line_label=None, additional_lam=None, additional_flux=None, additional_flux_label=None, additional_flux_color=["black","gray"], line_width_factor=1):
     '''
     Plot spectrum, optionally smoothed spectrum on top of it.
 
