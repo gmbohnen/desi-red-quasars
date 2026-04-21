@@ -55,21 +55,18 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
 
     assert additional_flux is None or not add_smoothed, "Can only have one of the two: additional_flux, add_smoothed"
 
-    plt.rcParams.update(**settings)
+    plt.rcParams.update(**settings)  # update settings to apply styles
 
-    plt.subplots(figsize=(15,8))
+    plt.subplots(figsize=(15,8))  
 
+    # plot primary flux
     plt.plot(lam, flux, linewidth=0.4*line_width_factor, color=pink, label=flux_label, alpha=0.7)
     
+    # plot smoothed version of primary flux if specified
     if add_smoothed:
         plt.plot(lam, convolve(flux, Gaussian1DKernel(5)), linewidth=0.8*line_width_factor, color="black", label="smoothed")   # 5 is value from datalab tutorial
 
-    # if additional_flux is not None:
-    #     if additional_lam is not None:
-    #         plt.plot(additional_lam, additional_flux, linewidth=0.8*line_width_factor, color="black", label=additional_flux_label)
-    #     else:
-    #         plt.plot(lam, additional_flux, linewidth=0.8*line_width_factor, color="black", label=additional_flux_label)
-
+    # plot additional fluxes if specified
     if additional_flux is not None:
         if additional_lam is not None:
             for i in range(len(additional_flux)):
@@ -78,14 +75,20 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
             for i in range(len(additional_flux)):
                 plt.plot(lam, additional_flux[i], linewidth=0.8*line_width_factor, color=additional_flux_color[i], label=additional_flux_label[i])
 
+    # plot vertical lines if specified
     if line_lambda:
         for i, elem in enumerate(line_lambda):
             plt.axvline(line_lambda[i], label=line_label[i], color=palette_dark[i+1])
 
+
     plt.title(title)
     plt.xlabel(r"$\lambda$ [$\AA$]")
     plt.ylabel(r"$F_{\lambda}~[10^{-17}~ergs~s^{-1}~cm^{-2}~{\AA}^{-1}]$")
-    plt.legend()
+    leg = plt.legend()
+
+    # increase and align line width in legend
+    for legobj in leg.legend_handles:
+        legobj.set_linewidth(3)
 
     plt.show()
 
