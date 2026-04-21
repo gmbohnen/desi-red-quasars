@@ -19,7 +19,7 @@ settings = {
     }
 
 
-def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line_lambda=None, line_label=None, additional_lam=None, additional_flux=None, additional_flux_label=None, additional_flux_color=["black","gray"], line_width_factor=1):
+def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line_lambda=None, line_label=None, additional_lam=None, additional_flux=None, additional_flux_label=None, additional_flux_color=["black","gray"], shaded_regions=None, shaded_regions_colors=None, shaded_regions_label=None, line_width_factor=1):
     '''
     Plot spectrum, optionally smoothed spectrum on top of it.
 
@@ -80,11 +80,18 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
         for i, elem in enumerate(line_lambda):
             plt.axvline(line_lambda[i], label=line_label[i], color=palette_dark[i+1])
 
+    if shaded_regions is not None:
+        for i, region in enumerate(shaded_regions):
+            plt.axvspan(region[0],region[1],label=shaded_regions_label[i],color=shaded_regions_colors[i], alpha=0.3)
 
     plt.title(title)
     plt.xlabel(r"$\lambda$ [$\AA$]")
     plt.ylabel(r"$F_{\lambda}~[10^{-17}~ergs~s^{-1}~cm^{-2}~{\AA}^{-1}]$")
-    leg = plt.legend()
+
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+
+    leg = plt.legend(by_label.values(), by_label.keys())
 
     # increase and align line width in legend
     for legobj in leg.legend_handles:
