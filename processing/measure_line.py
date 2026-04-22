@@ -45,8 +45,8 @@ def lam_to_vel(lam, lam0=CIV_VACUUM):
     return C_KMS * (lam - lam0) / lam0
 
 
-def measure_line(lam, profile, flux_sub, continuum_flux, window=FIT_WINDOW):
-    win = (lam >= window[0]) & (lam <= window[1]) & (profile > 0)
+def measure_line(lam, profile, flux_sub, continuum_flux, window=FIT_WINDOW, get_window=False):
+    win = (lam >= window[0]) & (lam <= window[1]) & (profile > 10E-4)
     if win.sum() < 5:
         return {k: np.nan for k in ['fwhm_kms','ew_aa','line_flux','centroid_kms','kt80']}
 
@@ -69,4 +69,7 @@ def measure_line(lam, profile, flux_sub, continuum_flux, window=FIT_WINDOW):
 
     kt80 = _kt80(w, p)
 
-    return dict(fwhm_kms=fwhm_kms, ew_aa=ew_aa, line_flux=line_flux, centroid_kms=centroid_kms, kt80=kt80)
+    if get_window:
+        return dict(fwhm_kms=fwhm_kms, ew_aa=ew_aa, line_flux=line_flux, centroid_kms=centroid_kms, kt80=kt80), win
+    else:
+        return dict(fwhm_kms=fwhm_kms, ew_aa=ew_aa, line_flux=line_flux, centroid_kms=centroid_kms, kt80=kt80)
