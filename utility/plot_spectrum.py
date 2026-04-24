@@ -15,7 +15,9 @@ settings = {
         'xtick.minor.size':4.0,
         'ytick.major.size':6.0,
         'ytick.minor.size':4.0,
-        'legend.frameon':False
+        'legend.frameon':False,
+        'mathtext.fontset':'stix',
+        'font.family':'STIXGeneral'
     }
 
 
@@ -33,6 +35,8 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
         Specify plot title.
     flux_label : str, optional
         Specify label of primary flux.
+    color : str, optional
+        Specify color of primary spectrum.
     add_smoothed : bool, optional
         Specifies whether smoothed spectrum is added on top of primary spectrum.
     line_lambda : list of float or None, optional
@@ -47,8 +51,12 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
         Specify label of additional flux.
     additional_flux_color : list of str, optional
         Specify colors of additional flux.
-    color : str, optional
-        Specify color of primary spectrum.
+    shaded_regions : list of tuple of float, optional
+        Shades the entire (full image height) x-axis interval for each of the windows passed. 
+    shaded_regions_colors : list of string, optional
+        Specify the color for each shaded region.
+    shaded_regions_label : list of string, optional
+        Specify the label for each shaded region, if multiple regions have the same label, it will only appear once in the legend.
     line_width_factor : int, optional
         Scales line widths by that factor.    
     '''
@@ -100,3 +108,5 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
     plt.show()
 
     plt.rcdefaults()
+
+    # TODO add functionality to save as svg
