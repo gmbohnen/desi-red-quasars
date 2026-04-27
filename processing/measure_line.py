@@ -44,9 +44,12 @@ def _kt80(lam, profile):
 def lam_to_vel(lam, lam0=CIV_VACUUM):
     return C_KMS * (lam - lam0) / lam0
 
-
-def measure_line(lam, profile, flux_sub, continuum_flux, window=FIT_WINDOW, get_window=False):
-    win = (lam >= window[0]) & (lam <= window[1]) & (profile > 10E-4)
+def measure_line(lam, profile, flux_sub, continuum_flux, ci, window=FIT_WINDOW, get_window=False):
+    # integration window constraints
+    # 1. in the window (1450,1650)
+    # 2. where the line fit profile is larger than 10E-4
+    # 3. inside the given confidence interval
+    win = (lam >= window[0]) & (lam <= window[1]) & (profile > 10E-4) & (lam >= ci[0]) & (lam <= ci[1])
     if win.sum() < 5:
         return {k: np.nan for k in ['fwhm_kms','ew_aa','line_flux','centroid_kms','kt80']}
 
