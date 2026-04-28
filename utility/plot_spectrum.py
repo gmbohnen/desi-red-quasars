@@ -21,7 +21,7 @@ settings = {
     }
 
 
-def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line_lambda=None, line_label=None, additional_lam=None, additional_flux=None, additional_flux_label=None, additional_flux_color=["black","gray"], shaded_regions=None, shaded_regions_colors=None, shaded_regions_label=None, line_width_factor=1):
+def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line_lambda=None, line_label=None, additional_lam=None, additional_flux=None, additional_flux_label=None, additional_flux_color=["black","gray"], shaded_regions=None, shaded_regions_colors=None, shaded_regions_label=None, xlim=None, ylim=None, line_width_factor=1):
     '''
     Plot spectrum, optionally smoothed spectrum on top of it.
 
@@ -57,6 +57,10 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
         Specify the color for each shaded region.
     shaded_regions_label : list of string, optional
         Specify the label for each shaded region, if multiple regions have the same label, it will only appear once in the legend.
+    xlim : tuple of float, optional
+        Specify limits of x axis
+    ylim : tuple of float, optional
+        Specify limits of y axis
     line_width_factor : int, optional
         Scales line widths by that factor.    
     '''
@@ -104,6 +108,11 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
     # increase and align line width in legend
     for legobj in leg.legend_handles:
         legobj.set_linewidth(3)
+
+    if xlim is not None:
+        plt.xlim(*xlim)
+    if ylim is not None:
+        plt.ylim(*ylim)
 
     plt.show()
 
