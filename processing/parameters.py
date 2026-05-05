@@ -24,10 +24,10 @@ BAL_MIN_WIDTH   = 10          # Angstrom
 
 # Two-Gaussian constraints
 MIN_WIDTH_RATIO = 1.2         # wing sigma >= this * core sigma
-MAX_WIDTH_RATIO = 4.0         # wing sigma <= this * core sigma
+MAX_WIDTH_RATIO = 3.0#4.0         # wing sigma <= this * core sigma
 MIN_CORE_SIGMA  = 3.0         # Angstrom
-MAX_CORE_SIGMA  = 80.0        # Angstrom (~15000 km/s FWHM)
-MAX_WING_SIGMA  = 200.0       # Angstrom
+MAX_CORE_SIGMA  = 30.0#80.0        # Angstrom (~15000 km/s FWHM)
+MAX_WING_SIGMA  = 80.0#200.0       # Angstrom
 
 # F-test significance threshold
 FTEST_PVALUE    = 0.05
