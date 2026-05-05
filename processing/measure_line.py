@@ -60,6 +60,7 @@ def measure_line(lam, profile, flux_sub, continuum_flux, ci, window=FIT_WINDOW, 
 
     fwhm_aa      = _profile_width(w, p, 0.5 * p.max())
     fwhm_kms     = C_KMS * fwhm_aa / CIV_VACUUM
+
     centroid_aa  = np.trapz(w * p, w) / np.trapz(p, w)
     centroid_kms = lam_to_vel(centroid_aa)
 
@@ -68,11 +69,13 @@ def measure_line(lam, profile, flux_sub, continuum_flux, ci, window=FIT_WINDOW, 
 
     with np.errstate(divide='ignore', invalid='ignore'):
         ew_integrand = np.where(fc > 0, fs / fc, 0.0)
+        fit_integrand = np.where(p > 0, p / fc, 0.0)
     ew_aa = np.trapz(ew_integrand, w)
+    fit_rew = np.trapz(fit_integrand, w)
 
     kt80 = _kt80(w, p)
 
     if get_window:
-        return dict(fwhm_kms=fwhm_kms, ew_aa=ew_aa, line_flux=line_flux, centroid_kms=centroid_kms, kt80=kt80), win
+        return dict(fwhm_kms=fwhm_kms, ew_aa=ew_aa, fit_rew=fit_rew, line_flux=line_flux, centroid_kms=centroid_kms, kt80=kt80), win
     else:
-        return dict(fwhm_kms=fwhm_kms, ew_aa=ew_aa, line_flux=line_flux, centroid_kms=centroid_kms, kt80=kt80)
+        return dict(fwhm_kms=fwhm_kms, ew_aa=ew_aa, fit_rew=fit_rew, line_flux=line_flux, centroid_kms=centroid_kms, kt80=kt80)
