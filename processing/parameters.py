@@ -15,7 +15,7 @@ BAL_SIGMA_THRESHOLD = -2.0    # reject if median flux in CIV window is this many
 MIN_EMISSION_SIGMA = 2.0      # reject if peak emission above continuum is less than this many sigma (no significant emission)
 
 C_KMS        = 2.99792458e5   # speed of light (km/s)
-CIV_VACUUM   = 1549.48        # CIV rest wavelength (Angstrom), doublet ignored
+CIV_AIR      = 1549.06        # CIV rest wavelength (Angstrom), doublet ignored; (CIV_1+CIV_2)/2 using vacuum wavelengths from Harris2016, then Edlén formula applied to convert to air
 FIT_WINDOW   = (1450, 1650)   # fitting window (rest-frame Angstrom)
 
 # BAL masking thresholds

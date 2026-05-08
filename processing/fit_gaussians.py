@@ -1,4 +1,4 @@
-from .parameters import FIT_WINDOW, MAX_WING_SIGMA, MIN_CORE_SIGMA, MAX_CORE_SIGMA, CIV_VACUUM, MIN_WIDTH_RATIO, MAX_WIDTH_RATIO, MAX_WING_SIGMA, FTEST_PVALUE
+from .parameters import FIT_WINDOW, MAX_WING_SIGMA, MIN_CORE_SIGMA, MAX_CORE_SIGMA, CIV_AIR, MIN_WIDTH_RATIO, MAX_WIDTH_RATIO, MAX_WING_SIGMA, FTEST_PVALUE
 import numpy as np
 from lmfit import Model, Parameters
 from scipy.stats import f as f_dist
@@ -70,7 +70,7 @@ def fit_two_gaussians(lam, flux_sub, ivar=None, mask=None, single_result=None, w
         sig0 = bv['sigma']
     else:
         amp0 = max(yd.max(), 1e-30)
-        cen0 = CIV_VACUUM
+        cen0 = CIV_AIR
         sig0 = 20.0
 
     sig_w0 = np.clip(sig0 * 2.0, sig0 * MIN_WIDTH_RATIO, MAX_WING_SIGMA)

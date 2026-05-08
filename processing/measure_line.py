@@ -1,4 +1,4 @@
-from .parameters import C_KMS, CIV_VACUUM, FIT_WINDOW
+from .parameters import C_KMS, CIV_AIR, FIT_WINDOW
 import numpy as np
 
 
@@ -32,8 +32,8 @@ def _kt80(lam, profile):
     dv_20 = _profile_width(lam, profile, 0.20 * peak)
 
     # convert to km/s
-    dv_80_kms = C_KMS * dv_80 / CIV_VACUUM
-    dv_20_kms = C_KMS * dv_20 / CIV_VACUUM
+    dv_80_kms = C_KMS * dv_80 / CIV_AIR
+    dv_20_kms = C_KMS * dv_20 / CIV_AIR
 
     if np.isnan(dv_80_kms) or np.isnan(dv_20_kms) or dv_80_kms <= 0:
         return np.nan
@@ -41,7 +41,7 @@ def _kt80(lam, profile):
     return dv_80_kms / dv_20_kms
 
 
-def lam_to_vel(lam, lam0=CIV_VACUUM):
+def lam_to_vel(lam, lam0=CIV_AIR):
     return C_KMS * (lam - lam0) / lam0
 
 def measure_line(lam, profile, flux_sub, continuum_flux, ci, window=FIT_WINDOW, get_window=False):
@@ -59,7 +59,7 @@ def measure_line(lam, profile, flux_sub, continuum_flux, ci, window=FIT_WINDOW, 
     fc = continuum_flux[win] if continuum_flux is not None else np.ones(win.sum())
 
     fwhm_aa      = _profile_width(w, p, 0.5 * p.max())
-    fwhm_kms     = C_KMS * fwhm_aa / CIV_VACUUM
+    fwhm_kms     = C_KMS * fwhm_aa / CIV_AIR
 
     centroid_aa  = np.trapz(w * p, w) / np.trapz(p, w)
     centroid_kms = lam_to_vel(centroid_aa)
