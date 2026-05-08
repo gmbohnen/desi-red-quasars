@@ -1,4 +1,4 @@
-from .parameters import FIT_WINDOW, MAX_WING_SIGMA, MIN_CORE_SIGMA, MAX_CORE_SIGMA, CIV_AIR, MIN_WIDTH_RATIO, MAX_WIDTH_RATIO, MAX_WING_SIGMA, FTEST_PVALUE
+from .parameters import CIV_FIT_WINDOW, MAX_WING_SIGMA, MIN_CORE_SIGMA, MAX_CORE_SIGMA, CIV_AIR, MIN_WIDTH_RATIO, MAX_WIDTH_RATIO, MAX_WING_SIGMA, FTEST_PVALUE
 import numpy as np
 from lmfit import Model, Parameters
 from scipy.stats import f as f_dist
@@ -10,7 +10,7 @@ def _gaussian(x, amplitude, center, sigma):
     return amplitude * np.exp(-0.5 * ((x - center) / sigma) ** 2)
 
 
-def fit_single_gaussian(lam, flux_sub, ivar=None, mask=None, window=FIT_WINDOW):
+def fit_single_gaussian(lam, flux_sub, ivar=None, mask=None, window=CIV_FIT_WINDOW):
     '''Fit emission line in some continuumm subtracted flux to a single Gaussian model, returns the model and the resulting line profile.'''
 
     # create mask for fitting window, combine with BAL mask
@@ -49,7 +49,7 @@ def _two_gaussian(x, amp_c, cen_c, sigma_c, amp_w, cen_w, sigma_w):
     return core + wing
 
 
-def fit_two_gaussians(lam, flux_sub, ivar=None, mask=None, single_result=None, window=FIT_WINDOW):
+def fit_two_gaussians(lam, flux_sub, ivar=None, mask=None, single_result=None, window=CIV_FIT_WINDOW):
     '''Fit emission line in some continuumm subtracted flux to a model with two Gaussians, returns the model and the resulting line profile.'''
 
     win = (lam >= window[0]) & (lam <= window[1])
