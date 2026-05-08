@@ -1,8 +1,8 @@
-from .parameters import BAL_SIGMA_MASK, BAL_MIN_WIDTH, FIT_WINDOW
+from .parameters import BAL_SIGMA_MASK, BAL_MIN_WIDTH, CIV_FIT_WINDOW
 import numpy as np
 
 
-def make_bal_mask(lam, flux_sub, ivar=None, sigma_thresh=BAL_SIGMA_MASK, min_width_aa=BAL_MIN_WIDTH, window=FIT_WINDOW):
+def make_bal_mask(lam, flux_sub, ivar=None, sigma_thresh=BAL_SIGMA_MASK, min_width_aa=BAL_MIN_WIDTH, window=CIV_FIT_WINDOW):
     '''Takes continuum subtracted flux, checks for broad absorption lines (BALs), and returns a mask of BAL detected regions.'''
 
     win = (lam >= window[0]) & (lam <= window[1])

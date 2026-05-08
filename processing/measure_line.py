@@ -1,4 +1,4 @@
-from .parameters import C_KMS, CIV_AIR, FIT_WINDOW
+from .parameters import C_KMS, CIV_AIR, CIV_FIT_WINDOW
 import numpy as np
 
 
@@ -44,7 +44,7 @@ def _kt80(lam, profile):
 def lam_to_vel(lam, lam0=CIV_AIR):
     return C_KMS * (lam - lam0) / lam0
 
-def measure_line(lam, profile, flux_sub, continuum_flux, ci, window=FIT_WINDOW, get_window=False):
+def measure_line(lam, profile, flux_sub, continuum_flux, ci, window=CIV_FIT_WINDOW, get_window=False):
     # integration window constraints
     # 1. in the window (1450,1650)
     # 2. where the line fit profile is larger than 10E-4
