@@ -80,6 +80,10 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
 
     # plot additional fluxes if specified
     if additional_flux is not None:
+        # add empty labels if none are supplied
+        if additional_flux_label is None:
+            additional_flux_label = [""]*len(additional_flux)
+            
         if additional_lam is not None:
             for i in range(len(additional_flux)):
                 plt.plot(additional_lam[i], additional_flux[i], linewidth=0.8*line_width_factor, color=additional_flux_color[i], label=additional_flux_label[i])
@@ -93,6 +97,10 @@ def plot_spectrum(lam, flux, title="", flux_label="raw", add_smoothed=True, line
             plt.axvline(line_lambda[i], label=line_label[i], color=palette_dark[i+1])
 
     if shaded_regions is not None:
+        # add empty labels if none are supplied
+        if shaded_regions_label is None:
+            shaded_regions_label = [""]*len(shaded_regions)
+
         for i, region in enumerate(shaded_regions):
             plt.axvspan(region[0],region[1],label=shaded_regions_label[i],color=shaded_regions_colors[i], alpha=0.3)
 
