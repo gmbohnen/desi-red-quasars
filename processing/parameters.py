@@ -29,7 +29,7 @@ CIV_FIT_WINDOW = (1450, 1650) # CIV fitting window (rest-frame Angstrom)
 
 # BAL masking thresholds
 BAL_SIGMA_MASK  = 2.5
-BAL_MIN_WIDTH   = 10          # Angstrom
+BAL_MIN_WIDTH   = 5           # Angstrom
 
 
 # Two-Gaussian constraints
