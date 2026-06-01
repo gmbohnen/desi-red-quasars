@@ -11,7 +11,7 @@ def get_intercepts_near_line(lam, upper_flux, lower_flux, x_val=1549):
     # separate into arrays for values below and over the line
     before_line = [x for x in vals_at_sign_change if x < x_val]
     behind_line = [x for x in vals_at_sign_change if x > x_val]
-
+    
     # sort lambda values by their distance to the line, then select closest each
     lower_intercept = sorted(before_line, key=lambda x: abs(x - x_val))[0]  
     upper_intercept = sorted(behind_line, key=lambda x: abs(x - x_val))[0]
