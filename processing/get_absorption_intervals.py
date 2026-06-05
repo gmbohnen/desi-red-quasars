@@ -10,8 +10,8 @@ from astropy.convolution import convolve, Gaussian1DKernel, Box1DKernel
 from scipy.signal import argrelmin, argrelmax
 
 
-def get_absorption_intervals(lam, flux, ivar, continuum, min_width_aa=BAL_MIN_WIDTH):
-    mask = (lam > 1450) & (lam < 1650)
+def get_absorption_intervals(lam, flux, ivar, continuum, window=(1450,1650), min_width_aa=BAL_MIN_WIDTH):
+    mask = (lam > window[0]) & (lam < window[1])
 
     lam, flux, ivar = lam[mask], flux[mask], ivar[mask]
 
