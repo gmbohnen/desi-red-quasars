@@ -93,6 +93,9 @@ def plot_spectrum(lam, flux, title="", flux_label="", add_smoothed=True, line_la
 
     # plot vertical lines if specified
     if line_lambda:
+        if line_label is None:
+            line_label = [""]*len(line_lambda)
+
         for i, elem in enumerate(line_lambda):
             plt.axvline(line_lambda[i], label=line_label[i], color=palette_dark[i+1])
 
