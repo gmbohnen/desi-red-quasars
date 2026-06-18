@@ -41,10 +41,25 @@ def _kt80(lam, profile):
     return dv_80_kms / dv_20_kms
 
 
+def get_ci(lam,profile,interval=0.99):
+    cutoff = (1-interval)/2
+    
+    cumsum = np.cumsum(profile)
+    cumsum /= np.max(cumsum)
+    
+    lower_idx = np.searchsorted(cumsum,cutoff)
+    upper_idx = np.searchsorted(cumsum,1-cutoff,side="left")
+
+    return (lam[lower_idx], lam[upper_idx])
+
+
 def lam_to_vel(lam, lam0=CIV_AIR):
     return C_KMS * (lam - lam0) / lam0
 
+
 def measure_line(lam, profile, flux_sub, continuum_flux, ci, window=CIV_FIT_WINDOW, get_window=False):
+    ci = get_ci(lam,profile)
+
     # integration window constraints
     # 1. in the window (1450,1650)
     # 2. where the line fit profile is larger than 10E-4
