@@ -1,8 +1,8 @@
-from .parameters import CONTINUUM_WINDOWS, CIV_REGION, MAX_POWERLAW_SLOPE, BAL_SIGMA_THRESHOLD, MIN_EMISSION_SIGMA
+from .parameters import CIV_CONTINUUM_WINDOWS, CIV_REGION, MAX_POWERLAW_SLOPE, BAL_SIGMA_THRESHOLD, MIN_EMISSION_SIGMA
 import numpy as np
 
 
-def _estimate_noise(residual, lam, window=CONTINUUM_WINDOWS):
+def _estimate_noise(residual, lam, window=CIV_CONTINUUM_WINDOWS):
     '''Estimate noise from the scatter in continuum window residuals.'''
 
     mask = np.zeros(len(lam), dtype=bool)
