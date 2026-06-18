@@ -19,7 +19,7 @@ def get_absorption_intervals(lam, flux, ivar, continuum, window=(1450,1650), min
     continuum = continuum[mask]
 
     center_absorption, blue_absorption = None, None
-    total_absorption = []
+    absorption_intervals = []
 
     ## BLUE ABSORPTION
     # use rolling mean because we want to smooth but stay as much to the original values as possible
@@ -33,7 +33,7 @@ def get_absorption_intervals(lam, flux, ivar, continuum, window=(1450,1650), min
         try:
             blue_absorption = get_intercepts_near_line(lam,lower_flux=continuum,upper_flux=flux_conv_mean,x_val=lam[min_idx])
             if blue_absorption[1] - blue_absorption[0] >= min_width_aa:
-                total_absorption.append(blue_absorption)
+                absorption_intervals.append(blue_absorption)
         except IndexError:
             print("IndexError while trying to find blue absorption boundaries")
         
@@ -77,10 +77,17 @@ def get_absorption_intervals(lam, flux, ivar, continuum, window=(1450,1650), min
                 five_percent = (upper - lower) * 0.05  # add puffer zone
 
                 center_absorption = (lower+five_percent, upper-five_percent)
-                total_absorption.append(center_absorption)
+                absorption_intervals.append(center_absorption)
 
 
-    if len(total_absorption) == 0:
-        return None
+    # if no absorption, return nothing
+    if len(absorption_intervals) == 0:
+        return None, None
+
+    # if absorption, make mask from intervals
+    elif len(absorption_intervals) == 1:
+        absorption_mask = (lam > absorption_intervals[0][0]) & (lam < absorption_intervals[0][1])
     else:
-        return total_absorption
+        absorption_mask = ((lam > absorption_intervals[0][0]) & (lam < absorption_intervals[0][1])) | ((lam > absorption_intervals[1][0]) & (lam < absorption_intervals[1][1]))
+    
+    return absorption_intervals, absorption_mask
