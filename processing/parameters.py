@@ -1,9 +1,15 @@
 # TODO check all these
 
-CONTINUUM_WINDOWS = [
+CIV_CONTINUUM_WINDOWS = [
     (1425, 1470),             # blue side of CIV, relatively clean
     (1680, 1710),             # red side of CIV, between HeII and CIII]
     (1760, 1810),             # far red continuum anchor
+]
+
+NV_LYA_CONTINUUM_WINDOWS = [
+    (1150, 1170),
+    (1280,1295),
+    (1315,1325)
 ]
 
 
@@ -24,7 +30,10 @@ CIV_AIR        = 1549.06      # doublet ignored; (CIV-1 + CIV-2) / 2
 
 
 C_KMS          = 2.99792458e5 # speed of light (km/s) 
+
+# Fit regions
 CIV_FIT_WINDOW = (1450, 1650) # CIV fitting window (rest-frame Angstrom)
+LYA_NV_FIT_WINDOW = (1150,1290)  # from Shen2019
 
 
 # BAL masking thresholds
