@@ -57,7 +57,7 @@ def lam_to_vel(lam, lam0=CIV_AIR):
     return C_KMS * (lam - lam0) / lam0
 
 
-def measure_line(lam, profile, flux_sub, continuum_flux, ci, window=CIV_FIT_WINDOW, get_window=False):
+def measure_line(lam, profile, flux_sub, continuum_flux, window=CIV_FIT_WINDOW, get_window=False):
     ci = get_ci(lam,profile)
 
     # integration window constraints
