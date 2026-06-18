@@ -13,9 +13,9 @@ from scipy.signal import argrelmin, argrelmax
 def get_absorption_intervals(lam, flux, ivar, continuum, window=(1450,1650), min_width_aa=BAL_MIN_WIDTH):
     mask = (lam > window[0]) & (lam < window[1])
 
-    lam, flux, ivar = lam[mask], flux[mask], ivar[mask]
+    lam_local, flux_local, ivar_local = lam[mask], flux[mask], ivar[mask]
 
-    noise = np.where(ivar > 0, 1.0 / np.sqrt(np.maximum(ivar, 1e-30)), np.inf)
+    noise = np.where(ivar_local > 0, 1.0 / np.sqrt(np.maximum(ivar_local, 1e-30)), np.inf)
     continuum = continuum[mask]
 
     center_absorption, blue_absorption = None, None
@@ -23,7 +23,7 @@ def get_absorption_intervals(lam, flux, ivar, continuum, window=(1450,1650), min
 
     ## BLUE ABSORPTION
     # use rolling mean because we want to smooth but stay as much to the original values as possible
-    flux_conv_mean = convolve(flux,Box1DKernel(5))
+    flux_conv_mean = convolve(flux_local,Box1DKernel(5))
 
     # get indeces of "global" minimum and maximum
     max_idx = np.argmax(flux_conv_mean)
@@ -31,7 +31,7 @@ def get_absorption_intervals(lam, flux, ivar, continuum, window=(1450,1650), min
 
     if flux_conv_mean[min_idx] < continuum[min_idx] - noise[min_idx]:
         try:
-            blue_absorption = get_intercepts_near_line(lam,lower_flux=continuum,upper_flux=flux_conv_mean,x_val=lam[min_idx])
+            blue_absorption = get_intercepts_near_line(lam_local,lower_flux=continuum,upper_flux=flux_conv_mean,x_val=lam_local[min_idx])
             if blue_absorption[1] - blue_absorption[0] >= min_width_aa:
                 absorption_intervals.append(blue_absorption)
         except IndexError:
@@ -40,14 +40,14 @@ def get_absorption_intervals(lam, flux, ivar, continuum, window=(1450,1650), min
 
     ## CENTER ABSORPTION
     # use gaussian smoothing since it strongly removes noise
-    flux_conv_gauss = convolve(flux, Gaussian1DKernel(3))
+    flux_conv_gauss = convolve(flux_local, Gaussian1DKernel(3))
 
     # extract indeces of local minima and maxima
     local_mins_idx = argrelmin(flux_conv_gauss)
     local_maxs_idx = argrelmax(flux_conv_gauss)
     # make mins and max lists with lam, flux and noise for each extremum
-    mins_list = [(lam[i],flux_conv_gauss[i],noise[i],0) for i in local_mins_idx[0]]
-    maxs_list = [(lam[i],flux_conv_gauss[i],noise[i],1) for i in local_maxs_idx[0]]
+    mins_list = [(lam_local[i],flux_conv_gauss[i],noise[i],0) for i in local_mins_idx[0]]
+    maxs_list = [(lam_local[i],flux_conv_gauss[i],noise[i],1) for i in local_maxs_idx[0]]
     # put into dataframe
     extrema = pd.DataFrame(sorted(mins_list + maxs_list),columns=["lam","flux_conv","noise","max_bool"])
 
