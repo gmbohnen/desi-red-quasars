@@ -16,7 +16,7 @@ def _estimate_noise(residual, lam, window=CIV_CONTINUUM_WINDOWS):
     return 1.4826 * np.median(np.abs(residual[mask] - np.median(residual[mask])))  # MAD as sigma estimator
 
 
-def quality_cuts(lam, flux, continuum, noise, fit_result,
+def quality_cuts(lam, flux, continuum, fit_result,
                  civ_region=CIV_REGION,
                  max_slope=MAX_POWERLAW_SLOPE,
                  bal_sigma=BAL_SIGMA_THRESHOLD,
@@ -55,7 +55,7 @@ def quality_cuts(lam, flux, continuum, noise, fit_result,
     
     alpha = fit_result.best_values['alpha']
     residual = np.array(flux) - np.array(continuum)
-    # noise = _estimate_noise(residual, lam)
+    noise_scalar = _estimate_noise(residual, lam)
 
     civ_mask = (np.array(lam) >= civ_region[0]) & \
                (np.array(lam) <= civ_region[1])
@@ -68,9 +68,9 @@ def quality_cuts(lam, flux, continuum, noise, fit_result,
         return True, f"Continuum too steep (alpha={alpha:.2f})", flags
 
     # Cut 2: Broad absorption at CIV wavelengths
-    if civ_mask.sum() > 0 and noise > 0:
+    if civ_mask.sum() > 0 and noise_scalar > 0:
         med_residual_civ = np.median(residual[civ_mask])
-        bal_detection = med_residual_civ / noise
+        bal_detection = med_residual_civ / noise_scalar
         flags['bal_detected'] = bal_detection < bal_sigma
         if flags['bal_detected']:
             return True, \
@@ -79,8 +79,8 @@ def quality_cuts(lam, flux, continuum, noise, fit_result,
         flags['bal_detected'] = False
 
     # Cut 3: No significant emission above continuum
-    if civ_mask.sum() > 0 and noise > 0:
-        peak_emission = np.max(residual[civ_mask]) / noise
+    if civ_mask.sum() > 0 and noise_scalar > 0:
+        peak_emission = np.max(residual[civ_mask]) / noise_scalar
         flags['no_emission'] = peak_emission < min_emission_sigma
         if flags['no_emission']:
             return True, \
