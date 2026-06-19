@@ -7,7 +7,7 @@ from processing.quality_cuts import quality_cuts
 from processing.get_absorption_intervals import get_absorption_intervals
 from processing.fit_gaussians import fit_single_gaussian, fit_two_gaussians, ftest_which_gaussian
 from processing.measure_line import measure_line
-from processing.parameters import CIV_CONTINUUM_WINDOWS, CIV_FIT_WINDOW, NV_LYA_CONTINUUM_WINDOWS
+from processing.parameters import CIV_CONTINUUM_WINDOWS, CIV_FIT_WINDOW, LYA_NV_FIT_WINDOW, NV_LYA_CONTINUUM_WINDOWS
 
 import numpy as np
 
@@ -21,15 +21,23 @@ def pipeline(lam, flux, ivar, z):
     ## EXTRACT VALID PIXELS & REMOVE OUTLIERS
 
     # valid pixels are: lambda inside relevant range (outer continuum window borders), flux is nonzero, ivar is nonzero and finite
-    valid_pixel_mask = np.where(((lam > 1150) & (lam < 1810)) & (ivar > 0) & np.isfinite(ivar) & (flux != 0), True, False)
+    # get rid of pixels with 0 and infinite ivar (PyQSOFit does that similarly), as well as zero flux pixels (both PyQSOFit and VANDELS paper by Saldana-Lopez also does that)
+    valid_pixel_mask = ((lam > 1150) & (lam < 1810)) & (ivar > 0) & np.isfinite(ivar) & (flux != 0)
     
     # apply mask
     lam = lam[valid_pixel_mask]
     flux = flux[valid_pixel_mask]
     ivar = ivar[valid_pixel_mask]
 
+    # create noise
+    noise = np.abs(1/np.sqrt(ivar))
+
     # remove spikes
     flux_clean, _ = remove_spikes(lam,flux,ivar=ivar)
+
+
+    ## CHECK SNR @ 1700A 
+    # TODO
 
 
     ## FIT COONTINUUM BELOW CIV
@@ -39,21 +47,20 @@ def pipeline(lam, flux, ivar, z):
     ## QUALITY CUTS (based on CIV region)
 
     # TODO: fix all this, like i think it doesnt do shit currently and you need to get the values fixed
-    rejected, reason, flags = quality_cuts(lam, flux_clean, continuum_civ, result_civ_cont, max_slope=10.0)
+    rejected, reason, flags = quality_cuts(lam, flux_clean, continuum_civ, noise, result_civ_cont, max_slope=10.0)
 
     if rejected:
         print(f'Rejected because: {reason}')
         return
 
 
-    ## GET CIV ABSORPTION MASK
-    _, civ_absorption_mask = get_absorption_intervals(lam,flux_clean,ivar,continuum_civ)  # first is intervals for plotting
-
-
     ## FIT CIV LINE
 
     # subtract CIV continuum
     flux_sub_civ = flux_clean - continuum_civ if not rejected else None
+
+    # get absorption mask
+    _, civ_absorption_mask = get_absorption_intervals(lam,flux_sub_civ,noise,continuum_civ)  # first is intervals for plotting
 
     # fit single gaussian, use result as parameter guesses for two gaussian fit
     result1_civ, profile1_civ = fit_single_gaussian(lam, flux_sub_civ, ivar=ivar, mask=civ_absorption_mask, window=CIV_FIT_WINDOW)
@@ -74,4 +81,5 @@ def pipeline(lam, flux, ivar, z):
 
 
     ## MEASURE LINES
-    line_stats_civ, _ = measure_line(lam, profile_civ, flux_sub_civ, continuum_civ, window=CIV_FIT_WINDOW)  # second is integration window, for plotting
+    line_stats_civ = measure_line(lam, profile_civ, flux_sub_civ, continuum_civ, window=CIV_FIT_WINDOW)  # second is integration window, for plotting
+    
