@@ -37,9 +37,9 @@ def remove_spikes(lam, flux, ivar=None, sigma_thresh=5.0, window=11):
     n = len(flux)
     spike_mask = np.zeros(n, dtype=bool)
 
-    # Flag zero/negative ivar pixels
-    if ivar is not None:
-        spike_mask |= (np.array(ivar) <= 0)
+    # Flag zero/negative ivar pixels -> unnecessary
+    # if ivar is not None:
+    #     spike_mask |= (np.array(ivar) <= 0)
 
     # Rolling median and MAD-based sigma clipping
     for i in range(n):
