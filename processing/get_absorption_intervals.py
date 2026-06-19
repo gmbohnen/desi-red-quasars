@@ -10,37 +10,38 @@ from astropy.convolution import convolve, Gaussian1DKernel, Box1DKernel
 from scipy.signal import argrelmin, argrelmax
 
 
-def get_absorption_intervals(lam, flux, ivar, continuum, window=(1450,1650), min_width_aa=BAL_MIN_WIDTH):
-    mask = (lam > window[0]) & (lam < window[1])
+def get_absorption_intervals(lam, flux_sub, continuum, noise, window=(1450,1650), min_width_aa=BAL_MIN_WIDTH):
+    # confine to relevant window, and exclude pixels that are more than noise below the continuum
+    mask = (lam > window[0]) & (lam < window[1]) & (flux_sub < -noise)
 
-    lam_local, flux_local, ivar_local = lam[mask], flux[mask], ivar[mask]
+    lam_local, flux_sub_local, noise_local = lam[mask], flux_sub[mask], noise[mask]
 
-    noise = np.where(ivar_local > 0, 1.0 / np.sqrt(np.maximum(ivar_local, 1e-30)), np.inf)
-    continuum = continuum[mask]
+    continuum_local = continuum[mask]
 
     center_absorption, blue_absorption = None, None
     absorption_intervals = []
 
-    ## BLUE ABSORPTION
-    # use rolling mean because we want to smooth but stay as much to the original values as possible
-    flux_conv_mean = convolve(flux_local,Box1DKernel(5))
+    # TODO sanity check this, especially condition makes no sense
+    # ## BLUE ABSORPTION
+    # # use rolling mean because we want to smooth but stay as much to the original values as possible
+    # flux_conv_mean = convolve(flux_local,Box1DKernel(5))
 
-    # get indeces of "global" minimum and maximum
-    max_idx = np.argmax(flux_conv_mean)
-    min_idx = np.argmin(flux_conv_mean[:max_idx])
+    # # get indeces of "global" minimum and maximum
+    # max_idx = np.argmax(flux_conv_mean)
+    # min_idx = np.argmin(flux_conv_mean[:max_idx])
 
-    if flux_conv_mean[min_idx] < continuum[min_idx] - noise[min_idx]:
-        try:
-            blue_absorption = get_intercepts_near_line(lam_local,lower_flux=continuum,upper_flux=flux_conv_mean,x_val=lam_local[min_idx])
-            if blue_absorption[1] - blue_absorption[0] >= min_width_aa:
-                absorption_intervals.append(blue_absorption)
-        except IndexError:
-            print("IndexError while trying to find blue absorption boundaries")
+    # if flux_conv_mean[min_idx] < continuum_local[min_idx] - noise[min_idx]:
+    #     try:
+    #         blue_absorption = get_intercepts_near_line(lam_local,lower_flux=continuum_local,upper_flux=flux_conv_mean,x_val=lam_local[min_idx])
+    #         if blue_absorption[1] - blue_absorption[0] >= min_width_aa:
+    #             absorption_intervals.append(blue_absorption)
+    #     except IndexError:
+    #         print("IndexError while trying to find blue absorption boundaries")
         
 
     ## CENTER ABSORPTION
     # use gaussian smoothing since it strongly removes noise
-    flux_conv_gauss = convolve(flux_local, Gaussian1DKernel(3))
+    flux_conv_gauss = convolve(flux_sub_local, Gaussian1DKernel(3))
 
     # extract indeces of local minima and maxima
     local_mins_idx = argrelmin(flux_conv_gauss)
