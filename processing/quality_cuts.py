@@ -16,7 +16,7 @@ def _estimate_noise(residual, lam, window=CIV_CONTINUUM_WINDOWS):
     return 1.4826 * np.median(np.abs(residual[mask] - np.median(residual[mask])))  # MAD as sigma estimator
 
 
-def quality_cuts(lam, flux, continuum, fit_result,
+def quality_cuts(lam, flux, continuum, noise, fit_result,
                  civ_region=CIV_REGION,
                  max_slope=MAX_POWERLAW_SLOPE,
                  bal_sigma=BAL_SIGMA_THRESHOLD,
@@ -55,7 +55,7 @@ def quality_cuts(lam, flux, continuum, fit_result,
     
     alpha = fit_result.best_values['alpha']
     residual = np.array(flux) - np.array(continuum)
-    noise = _estimate_noise(residual, lam)
+    # noise = _estimate_noise(residual, lam)
 
     civ_mask = (np.array(lam) >= civ_region[0]) & \
                (np.array(lam) <= civ_region[1])
