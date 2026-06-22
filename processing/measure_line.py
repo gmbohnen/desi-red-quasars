@@ -65,8 +65,17 @@ def measure_line(lam, profile, flux_sub, continuum_flux, window=CIV_FIT_WINDOW, 
     # 2. where the line fit profile is larger than 10E-4
     # 3. inside the given confidence interval
     win = (lam >= window[0]) & (lam <= window[1]) & (profile > 10E-4) & (lam >= ci[0]) & (lam <= ci[1])
+
+    # check if there are enough valid pixels
     if win.sum() < 5:
-        return {k: np.nan for k in ['fwhm_kms','ew_aa','line_flux','centroid_kms','kt80']}
+        print("Too little valid pixels to measure line.")
+        nan_dic = {k: np.nan for k in ['fwhm_kms','ew_aa','line_flux','centroid_kms','kt80']}
+        # return empty dictionary, and empty window if specified
+        if get_window:
+            return nan_dic, None
+        else:
+            return nan_dic
+
 
     w  = lam[win]
     p  = profile[win]
