@@ -12,7 +12,7 @@ from scipy.signal import argrelmin, argrelmax
 
 def get_absorption_intervals(lam, flux_sub, continuum, noise, window=(1450,1650), min_width_aa=BAL_MIN_WIDTH):
     # confine to relevant window, and exclude pixels that are more than noise below the continuum
-    mask = (lam > window[0]) & (lam < window[1]) & (flux_sub < -noise)
+    mask = (lam > window[0]) & (lam < window[1])
 
     lam_local, flux_sub_local, noise_local = lam[mask], flux_sub[mask], noise[mask]
 
@@ -70,7 +70,8 @@ def get_absorption_intervals(lam, flux_sub, continuum, noise, window=(1450,1650)
         indeces = query.index  # get indeces of selected minima
         for idx in indeces:
             # for each minima, check if one of its neighbors the overall maximum
-            if extrema["overall_max_bool"][idx-1].squeeze() == True or extrema["overall_max_bool"][idx+1].squeeze() == True:
+            # EDIT: only the right neighbor, so only check for absorption blueward of max
+            if extrema["overall_max_bool"][idx+1].squeeze() == True:# or extrema["overall_max_bool"][idx-1].squeeze() == True:
                 
                 # get the lambdas of the neighbors
                 lower = extrema["lam"][idx-1].squeeze()
@@ -81,14 +82,13 @@ def get_absorption_intervals(lam, flux_sub, continuum, noise, window=(1450,1650)
                 absorption_intervals.append(center_absorption)
 
 
-    # if no absorption, return nothing
-    if len(absorption_intervals) == 0:
-        return None, None
+    # also mask every pixel (within mask) that is more than noise below continuum
+    absorption_mask = mask & (flux_sub < -noise)
 
-    # if absorption, make mask from intervals
-    elif len(absorption_intervals) == 1:
-        absorption_mask = (lam > absorption_intervals[0][0]) & (lam < absorption_intervals[0][1])
-    else:
-        absorption_mask = ((lam > absorption_intervals[0][0]) & (lam < absorption_intervals[0][1])) | ((lam > absorption_intervals[1][0]) & (lam < absorption_intervals[1][1]))
+    # if absorption intervals are detected, add them to the mask using OR
+    if len(absorption_intervals) == 1:
+        absorption_mask |= ((lam > absorption_intervals[0][0]) & (lam < absorption_intervals[0][1]))
+    elif len(absorption_intervals) == 2:
+        absorption_mask |= ((lam > absorption_intervals[0][0]) & (lam < absorption_intervals[0][1])) | ((lam > absorption_intervals[1][0]) & (lam < absorption_intervals[1][1]))
     
     return absorption_intervals, absorption_mask
