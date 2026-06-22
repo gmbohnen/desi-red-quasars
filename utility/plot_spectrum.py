@@ -21,9 +21,20 @@ settings = {
     }
 
 
-def plot_spectrum(lam, flux, title="", flux_label="", add_smoothed=False, line_lambda=None, line_label=None, line_color=None, additional_lam=None, additional_flux=None, additional_flux_label=None, additional_flux_color=["black","gray"], shaded_regions=None, shaded_regions_colors=["lime","maroon"], shaded_regions_label=None, xlim=None, ylim=None, line_width_factor=1):
+def plot_spectrum(lam, flux,
+    title="", flux_label="", color=pink, add_smoothed=False,
+    # scatter plot
+    scatter_x=None, scatter_y=None, scatter_label="", scatter_color="#cf125e", scatter_marker="x", scatter_size=8,
+    # lines
+    line_lambda=None, line_label=None, line_color=None,
+    # additional flux
+    additional_lam=None, additional_flux=None, additional_flux_label=None, additional_flux_color=["black","gray"],
+    # shaded regions
+    shaded_regions=None, shaded_regions_colors=["lime","maroon"], shaded_regions_label=None,
+    # other
+    xlim=None, ylim=None, line_width_factor=1):
     '''
-    Plot spectrum, optionally smoothed spectrum on top of it.
+    Plot spectrum.
 
     Parameters
     ----------
@@ -39,6 +50,18 @@ def plot_spectrum(lam, flux, title="", flux_label="", add_smoothed=False, line_l
         Specify color of primary spectrum.
     add_smoothed : bool, optional
         Specifies whether smoothed spectrum is added on top of primary spectrum.
+    scatter_x : list of float, optional
+        Specify x values for scatter plot.
+    scatter_y : list of float, optional
+        Specify y values for scatter plot.
+    scatter_label : str, optional
+        Specify label of scatter plot.
+    scatter_color : str, optional
+        Specify color of scatter plot.
+    scatter_marker : str, optional
+        Specify marker style for scatter plot.
+    scatter_size : float, optional
+        Specify marker size.
     line_lambda : list of float, optional
         Passing values adds vertical lines.
     line_label : list of float, optional
@@ -69,16 +92,26 @@ def plot_spectrum(lam, flux, title="", flux_label="", add_smoothed=False, line_l
 
     assert additional_flux is None or not add_smoothed, "Can only have one of the two: additional_flux, add_smoothed"
 
+
     plt.rcParams.update(**settings)  # update settings to apply styles
 
     plt.subplots(figsize=(15,8))  
 
+
     # plot primary flux
-    plt.plot(lam, flux, linewidth=0.4*line_width_factor, color=pink, label=flux_label, alpha=0.7)
+    plt.plot(lam, flux, linewidth=0.4*line_width_factor, color=color, label=flux_label, alpha=0.7)
     
     # plot smoothed version of primary flux if specified
     if add_smoothed:
         plt.plot(lam, convolve(flux, Gaussian1DKernel(5)), linewidth=0.8*line_width_factor, color="black", label="smoothed")   # 5 is value from datalab tutorial
+
+
+    # add scatter plot if specified
+    if scatter_x is not None:
+        assert len(scatter_x) == len(scatter_y), "x and y arrays must match in length."
+
+        plt.scatter(scatter_x, scatter_y, color=scatter_color, marker=scatter_marker, s=scatter_size,linewidths=0.5*line_width_factor)
+
 
     # plot additional fluxes if specified
     if additional_flux is not None:
@@ -93,6 +126,7 @@ def plot_spectrum(lam, flux, title="", flux_label="", add_smoothed=False, line_l
             for i in range(len(additional_flux)):
                 plt.plot(lam, additional_flux[i], linewidth=0.8*line_width_factor, color=additional_flux_color[i], label=additional_flux_label[i])
 
+
     # plot vertical lines if specified
     if line_lambda:
         if line_label is None:
@@ -104,6 +138,8 @@ def plot_spectrum(lam, flux, title="", flux_label="", add_smoothed=False, line_l
         for i, elem in enumerate(line_lambda):
             plt.axvline(line_lambda[i], label=line_label[i], color=line_color[i])
 
+
+    # plot shaded regions if specified
     if shaded_regions is not None:
         # add empty labels if none are supplied
         if shaded_regions_label is None:
