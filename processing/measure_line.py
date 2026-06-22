@@ -90,7 +90,9 @@ def measure_line(lam, profile, flux_sub, continuum_flux, window=CIV_FIT_WINDOW, 
 
     kt80 = _kt80(w, p)
 
+    integration_limits = (w[0],w[-1])
+
     if get_window:
-        return dict(fwhm_kms=fwhm_kms, ew_aa=ew_aa, fit_rew=fit_rew, line_flux=line_flux, centroid_kms=centroid_kms, kt80=kt80), win
+        return dict(fwhm_kms=fwhm_kms, ew_aa=ew_aa, fit_rew=fit_rew, line_flux=line_flux, centroid_kms=centroid_kms, kt80=kt80), integration_limits
     else:
         return dict(fwhm_kms=fwhm_kms, ew_aa=ew_aa, fit_rew=fit_rew, line_flux=line_flux, centroid_kms=centroid_kms, kt80=kt80)
