@@ -110,7 +110,7 @@ def plot_spectrum(lam, flux,
     if scatter_x is not None:
         assert len(scatter_x) == len(scatter_y), "x and y arrays must match in length."
 
-        plt.scatter(scatter_x, scatter_y, color=scatter_color, marker=scatter_marker, s=scatter_size,linewidths=0.5*line_width_factor)
+        plt.scatter(scatter_x, scatter_y, color=scatter_color, marker=scatter_marker, s=scatter_size, linewidths=0.5*line_width_factor, label=scatter_label)
 
 
     # plot additional fluxes if specified
