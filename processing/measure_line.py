@@ -69,7 +69,7 @@ def measure_line(lam, profile, flux_sub, continuum_flux, window=CIV_FIT_WINDOW, 
     # check if there are enough valid pixels
     if win.sum() < 5:
         print("Too little valid pixels to measure line.")
-        nan_dic = {k: np.nan for k in ['fwhm_kms','ew_aa','line_flux','centroid_kms','kt80']}
+        nan_dic = {k: np.nan for k in ['fwhm_kms','ew_aa','fit_rew','line_flux','centroid_kms','kt80']}
         # return empty dictionary, and empty window if specified
         if get_window:
             return nan_dic, None
