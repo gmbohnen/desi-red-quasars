@@ -1,5 +1,5 @@
 pink = "#f86588"
-blue = "#3377cc"
+blue = "#52b5d5"
 green = "#33bb55"
 
 palette_light = ["#ff7ba4","#a980ff","#68d4ff","#e9fe83","#fff778","#ff6565"]
