@@ -1,8 +1,9 @@
 # TODO check all these
 
-CIV_CONTINUUM_WINDOWS = [  #
-    (1445, 1465),
-    (1690, 1705)
+CIV_CONTINUUM_WINDOWS = [ 
+    (1425, 1470),
+    (1680, 1710),
+    (1760, 1810)
 ]
 
 NV_LYA_CONTINUUM_WINDOWS = [  # Kramer2009
