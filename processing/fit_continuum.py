@@ -75,7 +75,7 @@ def fit_continuum(lam, flux, ivar=None,
         alpha=dict(value=-1.5, min=-10, max=10),
     )
 
-    result = plaw_model.fit(ydata, params, x=xdata, weights=weights)
+    result = plaw_model.fit(ydata, params, x=xdata, weights=weights,calc_covar=False)
 
     # Evaluate continuum across the full spectrum
     continuum = result.best_values['amplitude'] * ((lam / lambda_ref) ** result.best_values['alpha'])

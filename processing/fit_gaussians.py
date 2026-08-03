@@ -35,7 +35,7 @@ def fit_single_gaussian(lam, flux_sub, ivar=None, mask=None, window=CIV_FIT_WIND
         )
 
     # fit model, create line profile using best parameters
-    result = gmodel.fit(yd, params, x=xd, weights=weights, method='least_squares')
+    result = gmodel.fit(yd, params, x=xd, weights=weights, method='least_squares',calc_covar=False)
     profile = _gaussian(lam, result.best_values['amplitude'], result.best_values['center'], result.best_values['sigma'])
 
     return result, profile
@@ -91,7 +91,7 @@ def fit_two_gaussians(lam, flux_sub, ivar=None, mask=None, single_result=None, w
     params.add('delta_cen', value=0.0, min=-hw, max=hw)
     params.add('cen_c', expr='cen_w + delta_cen')
 
-    result = tmodel.fit(yd, params, x=xd, weights=weights, method='least_squares')
+    result = tmodel.fit(yd, params, x=xd, weights=weights, method='least_squares',calc_covar=False)
     bv = result.best_values
     profile = _two_gaussian(lam, bv['amp_c'], bv['cen_c'], bv['sigma_c'], bv['amp_w'], bv['cen_w'], bv['sigma_w'])
 
