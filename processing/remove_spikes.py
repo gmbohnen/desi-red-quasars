@@ -1,4 +1,5 @@
 from scipy.interpolate import interp1d
+from scipy.ndimage import median_filter
 import numpy as np
 import warnings
 
@@ -42,21 +43,28 @@ def remove_spikes(lam, flux, ivar=None, sigma_thresh=5.0, window=11):
     #     spike_mask |= (np.array(ivar) <= 0)
 
     # Rolling median and MAD-based sigma clipping
-    for i in range(n):
-        lo = max(0, i - window)
-        hi = min(n, i + window + 1)
-        neighbours = np.concatenate([flux[lo:i], flux[i+1:hi]])
+    # for i in range(n):
+    #     lo = max(0, i - window)
+    #     hi = min(n, i + window + 1)
+    #     neighbours = np.concatenate([flux[lo:i], flux[i+1:hi]])
 
-        if len(neighbours) < 3:
-            continue
+    #     if len(neighbours) < 3:
+    #         continue
 
-        med = np.median(neighbours)
-        mad = np.median(np.abs(neighbours - med))
+    #     med = np.median(neighbours)
+    #     mad = np.median(np.abs(neighbours - med))
 
-        sigma = 1.4826 * mad  # MAD*k is an estimator for sigma, where k is a scaling factor depending on the dstribution, 1.4826 for gaussian
+    #     sigma = 1.4826 * mad  # MAD*k is an estimator for sigma, where k is a scaling factor depending on the dstribution, 1.4826 for gaussian
 
-        if sigma > 0 and np.abs(flux[i] - med) > sigma_thresh * sigma:
-            spike_mask[i] = True
+    #     if sigma > 0 and np.abs(flux[i] - med) > sigma_thresh * sigma:
+    #         spike_mask[i] = True
+
+    size = 2 * window + 1  # matches your lo/hi span; center inclusion has negligible effect at window=11
+    med = median_filter(flux, size=size, mode='nearest')
+    mad = median_filter(np.abs(flux - med), size=size, mode='nearest')
+    sigma = 1.4826 * mad
+
+    spike_mask = (sigma > 0) & (np.abs(flux - med) > sigma_thresh * sigma)
 
     # Interpolate over flagged pixels using clean neighbours
     flux_clean = flux.copy()
