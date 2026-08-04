@@ -24,7 +24,7 @@ MAX_POWERLAW_SLOPE  = 3.0      # reject if |alpha| > this (unrealistically steep
 BAL_SIGMA_THRESHOLD = -2.0     # reject if median flux in CIV window is this many sigma BELOW the continuum (broad absorption)
 MIN_EMISSION_SIGMA  = 2.0      # reject if peak emission above continuum is less than this many sigma (no significant emission)
 
-# Fit quality threshold
+# Fit quality: reduced chi square threshold
 MAX_REDCHI = 3                 # Meija-Restrepo2018
 
 # line rest wavelength (Angstrom) using vacuum wavelengths from Harris2016, then Edlén formula applied to convert to air
@@ -49,7 +49,7 @@ BAL_MIN_WIDTH   = 5            # Angstrom
 MIN_WIDTH_RATIO = 1.2          # wing sigma >= this * core sigma
 MAX_WIDTH_RATIO = 3.0#4.0      # wing sigma <= this * core sigma
 MIN_CORE_SIGMA  = 3.0          # Angstrom
-MAX_CORE_SIGMA  = 30.0#80.0    # Angstrom (~15000 km/s FWHM)
+MAX_CORE_SIGMA  = 40.0#80.0    # Angstrom (~15000 km/s FWHM)
 MAX_WING_SIGMA  = 80.0#200.0   # Angstrom
 
 
