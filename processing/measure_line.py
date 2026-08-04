@@ -64,7 +64,8 @@ def measure_line(lam, profile, flux_sub, continuum_flux, window=CIV_FIT_WINDOW, 
     # 1. in the window (1450,1650)
     # 2. where the line fit profile is larger than 10E-4
     # 3. inside the given confidence interval
-    win = (lam >= window[0]) & (lam <= window[1]) & (profile > 10E-4) & (lam >= ci[0]) & (lam <= ci[1])
+    win = (lam >= window[0]) & (lam <= window[1]) & (profile > max(max(flux_sub)*10E-3,10E-4)) & (lam >= ci[0]) & (lam <= ci[1])
+
 
     # check if there are enough valid pixels
     if win.sum() < 5:
