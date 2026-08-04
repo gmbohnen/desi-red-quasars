@@ -24,6 +24,8 @@ MAX_POWERLAW_SLOPE  = 3.0      # reject if |alpha| > this (unrealistically steep
 BAL_SIGMA_THRESHOLD = -2.0     # reject if median flux in CIV window is this many sigma BELOW the continuum (broad absorption)
 MIN_EMISSION_SIGMA  = 2.0      # reject if peak emission above continuum is less than this many sigma (no significant emission)
 
+# Fit quality threshold
+MAX_REDCHI = 3                 # Meija-Restrepo2018
 
 # line rest wavelength (Angstrom) using vacuum wavelengths from Harris2016, then Edlén formula applied to convert to air
 LYA_AIR        = 1215.34     
