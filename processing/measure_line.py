@@ -94,7 +94,7 @@ def measure_line(lam, profile, flux_sub, continuum_flux, window=CIV_FIT_WINDOW, 
 
     with np.errstate(divide='ignore', invalid='ignore'):
         ew_integrand = np.where(fc > 0, fs / fc, 0.0)
-        fit_integrand = np.where(p > 0, p / fc, 0.0)
+        fit_integrand = np.where(fc > 0, p / fc, 0.0)
     ew_aa = np.trapz(ew_integrand, w)
     fit_rew = np.trapz(fit_integrand, w)
 
