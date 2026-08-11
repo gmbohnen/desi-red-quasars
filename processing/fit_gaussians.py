@@ -73,8 +73,8 @@ def fit_two_gaussians(lam, flux_sub, ivar=None, mask=None, single_result=None, w
         cen0 = CIV_AIR
         sig0 = 20.0
 
-    sig_w0 = np.clip(sig0 * 2.0, sig0 * MIN_WIDTH_RATIO, MAX_WING_SIGMA)
-    hw = 1.1775 * sig_w0   # half-FWHM of wing for core centroid bound
+    # sig_w0 = np.clip(sig0 * 2.0, sig0 * MIN_WIDTH_RATIO, MAX_WING_SIGMA)
+    # hw = 1.1775 * sig_w0   # half-FWHM of wing for core centroid bound
 
     tmodel = Model(_two_gaussian)
     params = Parameters()
@@ -88,7 +88,9 @@ def fit_two_gaussians(lam, flux_sub, ivar=None, mask=None, single_result=None, w
 
     # core
     params.add('amp_c', value=amp0 * 0.8, min=0)
-    params.add('delta_cen', value=0.0, min=-hw, max=hw)
+    # params.add('delta_cen', value=0.0, min=-hw, max=hw)
+    params.add('delta_scale', min=-1, max=1)
+    params.add('delta_cen', expr='delta_scale * 1.1775 * sigma_w')
     params.add('cen_c', expr='cen_w + delta_cen')
 
     result = tmodel.fit(yd, params, x=xd, weights=weights, method='least_squares',calc_covar=False)
