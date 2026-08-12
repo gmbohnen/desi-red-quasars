@@ -24,14 +24,15 @@ def get_absorption_intervals(lam, flux_sub, continuum, noise, window=(1450,1650)
     # TODO sanity check this, especially condition makes no sense
     # ## BLUE ABSORPTION
     # # use rolling mean because we want to smooth but stay as much to the original values as possible
-    # flux_conv_mean = convolve(flux_local,Box1DKernel(5))
+    # flux_conv_mean = convolve(flux_sub_local,Box1DKernel(5))
 
     # # get indeces of "global" minimum and maximum
     # max_idx = np.argmax(flux_conv_mean)
-    # min_idx = np.argmin(flux_conv_mean[:max_idx])
+    # min_idx = np.argmin(flux_conv_mean[:max_idx])  # min index on left (blue) side of maximum
 
-    # if flux_conv_mean[min_idx] < continuum_local[min_idx] - noise[min_idx]:
+    # if flux_conv_mean[min_idx] < continuum_local[min_idx] - noise_local[min_idx]:
     #     try:
+    #         # get the two intersections of the flux and the continuum that are closest (to the lam value of) the minimum
     #         blue_absorption = get_intercepts_near_line(lam_local,lower_flux=continuum_local,upper_flux=flux_conv_mean,x_val=lam_local[min_idx])
     #         if blue_absorption[1] - blue_absorption[0] >= min_width_aa:
     #             absorption_intervals.append(blue_absorption)
