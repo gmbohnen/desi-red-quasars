@@ -11,9 +11,21 @@ from processing.scale_civ_to_nv import scale_civ_to_nv
 from processing.parameters import CIV_CONTINUUM_WINDOWS, CIV_FIT_WINDOW, LYA_NV_FIT_WINDOW, NV_LYA_CONTINUUM_WINDOWS, CIV_AIR, NV_AIR, LYA_AIR
 
 import numpy as np
+import h5py
 
 
-def pipeline(lam, flux, ivar):
+spectra_hdf5_path = "data/batches/spectra.h5"  # TODO move to a config file?
+
+
+def pipeline(idx):
+
+    with h5py.File(spectra_hdf5_path, "r") as f:
+        data = f[f"{idx}"][()]
+        
+    lam = data[0,:]
+    flux = data[1,:]
+    ivar = data[2,:]
+
     # preprocessing (redshift removal and bad pixel masking) already done in retrieval pipeline
 
     # create noise
