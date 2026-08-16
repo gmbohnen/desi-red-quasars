@@ -12,16 +12,20 @@ def process_batch(args):
 
     erq_candidates = []
 
+    results_path = f"data/batches/results_{idx}.jsonl"
+
     for idx in target_idxs:
 
         # run pipeline
         measurements = pipeline(idx)
 
+        if ...:
         # TODO check ERQ condition? or in pipeline? but id suppose here is better so the pipeline truly is just processing 
+            erq_candidates.append(idx)
 
         # dump results into results json
-        with open(f"data/batches/results_{process_idx}.json", "a") as j:
-            json.dump(measurements,j)
+        with open(results_path, "a") as f:
+            f.write(json.dumps(measurements) + '\n')
     
     return erq_candidates
 
