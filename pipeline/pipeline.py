@@ -134,4 +134,12 @@ def pipeline(idx):
             "rew_lya" : line_stats_lya["ew_aa"]
         }
 
+        # structure
+
+        results = {
+            "targetid":idx,
+            "rew_civ": # TODO: change measure_line.py in a way that only what you want is measured, or like check what it all is and if you need it
+                
+            }
+
         return rew_dic
