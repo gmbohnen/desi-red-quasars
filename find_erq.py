@@ -5,19 +5,25 @@ import multiprocessing
 import json
 import sys
 
+
 def process_batch(args):
     process_idx = args[0]
     target_idxs = args[1]
 
-    # for idx in target_idxs:
+    erq_candidates = []
+
+    for idx in target_idxs:
 
         # run pipeline
-        # TODO: pipeline() should only take idx as argument and load the arrays itself
-        # TODO: should return dictionary of return values
+        measurements = pipeline(idx)
+
+        # TODO check ERQ condition? or in pipeline? but id suppose here is better so the pipeline truly is just processing 
 
         # dump results into results json
-
-    pass
+        with open(f"data/batches/results_{process_idx}.json", "a") as j:
+            json.dump(measurements,j)
+    
+    return erq_candidates
 
 
 if __name__ == "__main__":
