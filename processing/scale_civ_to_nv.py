@@ -45,7 +45,7 @@ def scale_civ_to_nv(lam,flux_sub,params_dict,accept_two,ivar=None,mask=None,fit_
         model = Model(_make_nv_model(params_dict,accept_two),independent_vars=["x"])
 
         params = Parameters()
-        params.add('scale',min=10E-5)
+        params.add('scale',min=10E-2)
         params.add('shift',min=-500,max=500)
 
         result = model.fit(yd,params,x=xd,weights=weights)
