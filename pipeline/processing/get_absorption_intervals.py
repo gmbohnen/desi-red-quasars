@@ -10,7 +10,7 @@ from astropy.convolution import convolve, Gaussian1DKernel, Box1DKernel
 from scipy.signal import argrelmin, argrelmax
 
 
-def get_absorption_intervals(lam, flux, flux_sub, continuum, noise, window=(1450,1650), min_width_aa=BAL_MIN_WIDTH):
+def get_absorption_intervals(lam, flux, flux_sub, continuum, noise, window=(1450,1650), min_width_aa=BAL_MIN_WIDTH, verbose=True):
     # confine to relevant window, and exclude pixels that are more than noise below the continuum
     mask = (lam > window[0]) & (lam < window[1])
 
@@ -39,7 +39,8 @@ def get_absorption_intervals(lam, flux, flux_sub, continuum, noise, window=(1450
                 absorption_intervals.append(blue_absorption)
                 blue_absorption_found = True
         except IndexError:
-            print("IndexError while trying to find blue absorption boundaries")
+            if verbose:
+                print("IndexError while trying to find blue absorption boundaries")
             if lam_local[min_idx] - lam_local[0] >= min_width_aa:
                 blue_absorption_found = True
         
