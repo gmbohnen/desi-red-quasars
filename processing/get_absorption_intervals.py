@@ -18,7 +18,8 @@ def get_absorption_intervals(lam, flux, flux_sub, continuum, noise, window=(1450
 
     continuum_local = continuum[mask]
 
-    center_absorption, blue_absorption = None, None
+    # center_absorption, blue_absorption = None, None
+    blue_absorption_found, center_absorption_found = False, False
     absorption_intervals = []
 
     # TODO sanity check this, especially condition makes no sense
@@ -30,14 +31,12 @@ def get_absorption_intervals(lam, flux, flux_sub, continuum, noise, window=(1450
     max_idx = np.argmax(flux_conv_mean)
     min_idx = np.argmin(flux_conv_mean[:max_idx])  # min index on left (blue) side of maximum
 
-    blue_absorption_found = False
-
     if flux_conv_mean[min_idx] < continuum_local[min_idx] - noise_local[min_idx]:
         try:
             # get the two intersections of the flux and the continuum that are closest (to the lam value of) the minimum
             blue_absorption = get_intercepts_near_line(lam_local,lower_flux=continuum_local,upper_flux=flux_conv_mean,x_val=lam_local[min_idx])
             if blue_absorption[1] - blue_absorption[0] >= min_width_aa:
-                # absorption_intervals.append(blue_absorption)
+                absorption_intervals.append(blue_absorption)
                 blue_absorption_found = True
         except IndexError:
             print("IndexError while trying to find blue absorption boundaries")
@@ -86,7 +85,7 @@ def get_absorption_intervals(lam, flux, flux_sub, continuum, noise, window=(1450
 
                 center_absorption = (lower+five_percent, upper-five_percent)
                 absorption_intervals.append(center_absorption)
-
+                center_absorption_found = True
 
     # also mask every pixel (within mask) that is more than noise below continuum
     absorption_mask = mask & (flux_sub < -noise)
@@ -97,4 +96,4 @@ def get_absorption_intervals(lam, flux, flux_sub, continuum, noise, window=(1450
     elif len(absorption_intervals) == 2:
         absorption_mask |= ((lam > absorption_intervals[0][0]) & (lam < absorption_intervals[0][1])) | ((lam > absorption_intervals[1][0]) & (lam < absorption_intervals[1][1]))
     
-    return absorption_intervals, absorption_mask, blue_absorption_found
+    return absorption_intervals, absorption_mask, blue_absorption_found, center_absorption_found
