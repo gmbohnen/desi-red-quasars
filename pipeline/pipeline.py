@@ -1,8 +1,5 @@
-from utility.adjust_redshift import adjust_redshift
-
 from .processing.remove_spikes import remove_spikes
 from .processing.fit_continuum import fit_continuum
-from .processing.quality_cuts import quality_cuts
 from .processing.get_absorption_intervals import get_absorption_intervals
 from .processing.fit_gaussians import fit_single_gaussian, fit_two_gaussians, ftest_which_gaussian
 from .processing.measure_line import measure_line
@@ -15,7 +12,7 @@ import h5py
 import warnings
 
 
-spectra_hdf5_path = "data/subset_desi_spectra.h5"#"data/batches/spectra.h5"  # TODO move to a config file?
+spectra_hdf5_path = "data/batches/spectra.h5"  # TODO move to a config file?
 
 
 def pipeline(idx,verbose=False):
