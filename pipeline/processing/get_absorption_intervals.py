@@ -75,8 +75,7 @@ def get_absorption_intervals(lam, flux, flux_sub, continuum, noise, window=(1450
         indeces = query.index  # get indeces of selected minima
         for idx in indeces:
             # for each minima, check if one of its neighbors the overall maximum
-            # EDIT: only the right neighbor, so only check for absorption blueward of max
-            if extrema["overall_max_bool"][idx+1].squeeze() == True:# or extrema["overall_max_bool"][idx-1].squeeze() == True:
+            if extrema["overall_max_bool"][idx+1].squeeze() == True or extrema["overall_max_bool"][idx-1].squeeze() == True:
                 
                 # get the lambdas of the neighbors
                 lower = extrema["lam"][idx-1].squeeze()
@@ -91,9 +90,7 @@ def get_absorption_intervals(lam, flux, flux_sub, continuum, noise, window=(1450
     absorption_mask = mask & (flux_sub < -noise)
 
     # if absorption intervals are detected, add them to the mask using OR
-    if len(absorption_intervals) == 1:
-        absorption_mask |= ((lam > absorption_intervals[0][0]) & (lam < absorption_intervals[0][1]))
-    elif len(absorption_intervals) == 2:
-        absorption_mask |= ((lam > absorption_intervals[0][0]) & (lam < absorption_intervals[0][1])) | ((lam > absorption_intervals[1][0]) & (lam < absorption_intervals[1][1]))
+    for elem in absorption_intervals:
+        absorption_mask |= ((lam > elem[0]) & (lam < [1]))
     
     return absorption_intervals, absorption_mask, blue_absorption_found, center_absorption_found
