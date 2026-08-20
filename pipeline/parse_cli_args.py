@@ -2,6 +2,8 @@ import getopt, sys
 import multiprocessing
     
 def parse_cli_args(args):
+    '''Parses the arguments from the commandline and returns values.'''
+    
     options = "hn:s:w:"
     long_options = ["Help", "N_Rounds=", "Batch_Size=", "N_Worker="]
 
