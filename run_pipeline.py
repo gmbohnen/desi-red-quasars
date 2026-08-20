@@ -12,8 +12,8 @@ def process_batch(args):
     process_idx = args[0]
     target_idxs = args[1]
 
-    results_path = f"data/processing/batches/results_{idx}.jsonl"
-    processed_path = f"data/processing/processed_targetid_files/processed_{idx}.txt"
+    results_path = f"data/processing/batches/results_{process_idx}.jsonl"
+    processed_path = f"data/processing/processed_targetid_files/processed_{process_idx}.txt"
 
     for idx in target_idxs:
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         args_list = get_args_list(batch_size=batch_size, n_worker=n_worker)
 
         # create pool, run parallel processing
-        pool = multiprocessing.Pool(processes=n_workers)
+        pool = multiprocessing.Pool(processes=n_worker)
         results = pool.map(process_batch, args_list)
         pool.close()
         pool.join()
