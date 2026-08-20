@@ -1,5 +1,9 @@
+import os
+
+
 PROCESSED_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/processing/processed_targetid_files"
 TARGETID_PATH = "data/results/targetid_list.txt"
+
 
 def get_args_list(batch_size,n_worker):
     '''Create list of arguments for one round of processing, i.e. a list of tuples (process_id,list_of_targetids) for each worker.'''
