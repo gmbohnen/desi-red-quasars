@@ -2,7 +2,7 @@ import os
 
 
 PROCESSED_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/processing/processed_targetid_files"
-TARGETID_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/results/targetid_list.txt"
+TARGETID_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/processing/targetid_list.txt"
 
 
 def get_args_list(batch_size,n_worker):
