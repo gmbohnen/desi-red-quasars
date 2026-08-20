@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
 
     # for each round args_list is created again so the lists stored are not too large
-    for _ in range(n_rounds):
+    for r in range(n_rounds):
         tic = time.time()
 
         args_list = get_args_list(batch_size=batch_size, n_worker=n_worker)
@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
         toc = time.time() - tic
 
-        print(f"Round 1 finished in {toc/60:.2f} minutes.")
+        print(f"Round {r} finished in {toc/60:.2f} minutes.")
 
     tuc = time.time() - tac
 
