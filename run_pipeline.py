@@ -33,6 +33,7 @@ def process_batch(args):
 
 
 if __name__ == "__main__":
+    tac = time.time()
 
     # parse arguments
     cli_args = sys.argv[1:]
@@ -59,4 +60,6 @@ if __name__ == "__main__":
 
         print(f"Round 1 finished in {toc/60:.2f} minutes.")
 
-    print("--------------------\nProcessing finished.")
+    tuc = time.time() - tac
+
+    print(f"---------------------------\nFinished processing of {n_batches*batch_size} objects in {tuc/60:.2f} minutes.")
