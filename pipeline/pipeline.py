@@ -12,7 +12,7 @@ import h5py
 import warnings
 
 
-spectra_hdf5_path = "data/batches/spectra.h5"  # TODO move to a config file?
+spectra_hdf5_path = "data/spectra.h5"  # TODO move to a config file?
 
 
 def pipeline(idx,verbose=False):
