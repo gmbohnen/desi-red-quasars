@@ -1,6 +1,7 @@
 from pipeline.pipeline import pipeline
 from pipeline.parse_cli_args import parse_cli_args
 from pipeline.get_args_list import get_args_list
+from utility.numpy_json_encoder import NumpyEncoder
 
 import multiprocessing
 import json
@@ -22,10 +23,10 @@ def process_batch(args):
 
         # dump results into results json
         with open(results_path, "a") as f:
-            f.write(json.dumps(measurements) + "\n")
+            f.write(json.dumps(measurements, cls=NumpyEncoder) + "\n")
         
         # additionally store targetid in the processed list
-        with open(process_batch, "a") as f:
+        with open(processed_path, "a") as f:
             f.write(idx + "\n")
     
     return process_idx
