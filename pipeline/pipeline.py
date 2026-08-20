@@ -34,13 +34,13 @@ def pipeline(idx,verbose=False):
     noise = np.abs(1/np.sqrt(ivar))
 
     # remove spikes
-    flux_clean, _ = remove_spikes(lam,flux,ivar=ivar)
+    flux_clean, _ = remove_spikes(lam=lam,flux=flux,ivar=ivar)
 
 
     #------------------------------------------------------------------------------------
 
     ## FIT CONTINUUM BELOW CIV
-    result_civ_cont, continuum_civ, _ = fit_continuum(lam, flux_clean, ivar=ivar, windows=CIV_CONTINUUM_WINDOWS, lambda_ref=1700.0)
+    result_civ_cont, continuum_civ, _ = fit_continuum(lam=lam, flux=flux_clean, ivar=ivar, windows=CIV_CONTINUUM_WINDOWS, lambda_ref=1700.0)
       
 
     ## FIT CIV LINE
@@ -49,14 +49,14 @@ def pipeline(idx,verbose=False):
     flux_sub_civ = flux_clean - continuum_civ
 
     # get absorption mask
-    civ_absorption_intervals, civ_absorption_mask, civ_blue_absorption_detected, civ_center_absorption_detected = get_absorption_intervals(lam,flux_clean,flux_sub_civ,continuum_civ,noise, window=CIV_FIT_WINDOW, verbose=verbose)
+    civ_absorption_intervals, civ_absorption_mask, civ_blue_absorption_detected, civ_center_absorption_detected = get_absorption_intervals(lam=lam, flux=flux_clean, flux_sub=flux_sub_civ, continuum=continuum_civ, noise=noise, window=CIV_FIT_WINDOW, verbose=verbose)
 
     # fit single gaussian, use result as parameter guesses for two gaussian fit
-    result1_civ, profile1_civ = fit_single_gaussian(lam, flux_sub_civ, ivar=ivar, mask=civ_absorption_mask, window=CIV_FIT_WINDOW)
-    result2_civ, profile2_civ = fit_two_gaussians(lam, flux_sub_civ, ivar=ivar, mask=civ_absorption_mask, single_result=result1_civ, window=CIV_FIT_WINDOW)
+    result1_civ, profile1_civ = fit_single_gaussian(lam=lam, flux_sub=flux_sub_civ, ivar=ivar, mask=civ_absorption_mask, window=CIV_FIT_WINDOW)
+    result2_civ, profile2_civ = fit_two_gaussians(lam=lam, flux_sub=flux_sub_civ, ivar=ivar, mask=civ_absorption_mask, single_result=result1_civ, window=CIV_FIT_WINDOW)
 
     # F-test which fit is better
-    accept_two_civ, p_val_civ = ftest_which_gaussian(result1_civ, result2_civ)
+    accept_two_civ, p_val_civ = ftest_which_gaussian(result1=result1_civ, result2=result2_civ)
 
     # depending on F-test result, assign respective profile, result and best parameter dictionary to general variables
     profile_civ = profile2_civ if accept_two_civ else profile1_civ
@@ -67,17 +67,17 @@ def pipeline(idx,verbose=False):
 
     ## CONTINUUM BELOW NV AND LYA
 
-    result_lya_nv_cont, continuum_nv_lya, _ = fit_continuum(lam, flux_clean, ivar=ivar, windows=NV_LYA_CONTINUUM_WINDOWS+CIV_CONTINUUM_WINDOWS, lambda_ref=1290.0)  # fit continuum
+    result_lya_nv_cont, continuum_nv_lya, _ = fit_continuum(lam=lam, flux=flux_clean, ivar=ivar, windows=NV_LYA_CONTINUUM_WINDOWS+CIV_CONTINUUM_WINDOWS, lambda_ref=1290.0)  # fit continuum
     flux_sub_nv_lya = flux_clean - continuum_nv_lya  # subtract continuum
     
 
     ## NV PROFILE
 
     # make LYA mask
-    lya_mask = make_scaling_mask(lam,profile_civ)
+    lya_mask = make_scaling_mask(lam=lam, profile_civ=profile_civ)
 
     # fit NV by scaling CIV template
-    result_nv, profile_nv = scale_civ_to_nv(lam,flux_sub_nv_lya,params_dict_civ,accept_two_civ,ivar=ivar,mask=lya_mask)
+    result_nv, profile_nv = scale_civ_to_nv(lam=lam, flux_sub=flux_sub_nv_lya, params_dict=params_dict_civ, accept_two=accept_two_civ, ivar=ivar, mask=lya_mask)
 
 
     ## LYA PROFILE
@@ -86,14 +86,14 @@ def pipeline(idx,verbose=False):
     flux_sub_lya = flux_sub_nv_lya - profile_nv
 
     # get absorption mask
-    lya_absorption_intervals, lya_absorption_mask, lya_blue_absorption_detected, lya_center_absorption_detected = get_absorption_intervals(lam,flux_clean,flux_sub_lya,continuum_nv_lya,noise,window=LYA_NV_FIT_WINDOW,verbose=verbose)
+    lya_absorption_intervals, lya_absorption_mask, lya_blue_absorption_detected, lya_center_absorption_detected = get_absorption_intervals(lam=lam, flux=flux_clean, flux_sub=flux_sub_lya, continuum=continuum_nv_lya, noise=noise, window=LYA_NV_FIT_WINDOW, verbose=verbose)
 
     # fit single gaussian, use result as parameter guesses for two gaussian fit
-    result1_lya, profile1_lya = fit_single_gaussian(lam, flux_sub_lya, ivar=ivar, mask=lya_absorption_mask, window=LYA_NV_FIT_WINDOW)
-    result2_lya, profile2_lya = fit_two_gaussians(lam, flux_sub_lya, ivar=ivar, mask=lya_absorption_mask, single_result=result1_lya, window=LYA_NV_FIT_WINDOW)
+    result1_lya, profile1_lya = fit_single_gaussian(lam=lam, flux_sub=flux_sub_lya, ivar=ivar, mask=lya_absorption_mask, window=LYA_NV_FIT_WINDOW)
+    result2_lya, profile2_lya = fit_two_gaussians(lam=lam, flux_sub=flux_sub_lya, ivar=ivar, mask=lya_absorption_mask, single_result=result1_lya, window=LYA_NV_FIT_WINDOW)
 
     # F-test which fit is better, assign to general variable
-    accept_two_lya, p_val_lya = ftest_which_gaussian(result1_lya, result2_lya)
+    accept_two_lya, p_val_lya = ftest_which_gaussian(result1=result1_lya, result2=result2_lya)
 
     # depending on F-test result, assign respective profile and result to general variables
     profile_lya = profile2_lya if accept_two_lya else profile1_lya
@@ -104,28 +104,28 @@ def pipeline(idx,verbose=False):
     ## LINE MEASUREMENT
 
     # CIV
-    line_stats_civ, civ_integration_win = measure_line(lam, profile_civ, flux_sub_civ, continuum_civ, window=CIV_FIT_WINDOW,get_window=True,verbose=verbose) 
+    line_stats_civ, civ_integration_win = measure_line(lam=lam, profile=profile_civ, flux_sub=flux_sub_civ, continuum=continuum_civ, window=CIV_FIT_WINDOW,get_window=True, verbose=verbose) 
 
     # NV
     flux_sub_nv = flux_sub_nv_lya - profile_lya  # subtract LYA profile
-    line_stats_nv, nv_integration_win = measure_line(lam,profile_nv,flux_sub_nv,continuum_nv_lya,window=LYA_NV_FIT_WINDOW,get_window=True,verbose=verbose)
+    line_stats_nv, nv_integration_win = measure_line(lam=lam, profile=profile_nv, flux_sub=flux_sub_nv, continuum=continuum_nv_lya, window=LYA_NV_FIT_WINDOW, get_window=True, verbose=verbose)
 
     # LYA
-    line_stats_lya, lya_integration_win = measure_line(lam,profile_lya,flux_sub_lya,continuum_nv_lya,window=LYA_NV_FIT_WINDOW,get_window=True,verbose=verbose)
+    line_stats_lya, lya_integration_win = measure_line(lam=lam, profile=profile_lya, flux_sub=flux_sub_lya, continuum=continuum_nv_lya, window=LYA_NV_FIT_WINDOW, get_window=True, verbose=verbose)
 
     #------------------------------------------------------------------------------------
 
     ## ADDITIONAL METRICS
 
     # signal-to-noise ratio at each line + 1700A
-    snr_1700 = snr_around_lam(lam,flux_sub_civ,noise)
-    snr_civ = snr_around_lam(lam,flux_sub_civ,noise,ref_lam=CIV_AIR)
-    snr_nv = snr_around_lam(lam,flux_sub_nv_lya,noise,ref_lam=NV_AIR)
-    snr_lya = snr_around_lam(lam,flux_sub_nv_lya,noise,ref_lam=LYA_AIR)
+    snr_1700 = snr_around_lam(lam=lam, flux=flux_sub_civ, noise=noise, ref_lam=1700)
+    snr_civ = snr_around_lam(lam=lam, flux=flux_sub_civ, noise=noise, ref_lam=CIV_AIR)
+    snr_nv = snr_around_lam(lam=lam, flux=flux_sub_nv_lya, noise= noise, ref_lam=NV_AIR)
+    snr_lya = snr_around_lam(lam=lam, flux=flux_sub_nv_lya, noise=noise, ref_lam=LYA_AIR)
 
     # ratio of pixels used in fits for validation
-    civ_pixel_used = pixel_used_in_window(lam,civ_absorption_mask,CIV_FIT_WINDOW[0],CIV_FIT_WINDOW[1])
-    lya_blue_end_pixel_used = pixel_used_in_window(lam,lya_absorption_mask,LYA_NV_FIT_WINDOW[0],NV_AIR)  # only consider the left part of the fit window, up to NV
+    civ_pixel_used = pixel_used_in_window(lam=lam, mask=civ_absorption_mask, lower_lim=CIV_FIT_WINDOW[0], upper_lim=CIV_FIT_WINDOW[1])
+    lya_blue_end_pixel_used = pixel_used_in_window(lam=lam, mask=lya_absorption_mask, lower_lim=LYA_NV_FIT_WINDOW[0], upper_lim=NV_AIR)  # only consider the left part of the fit window, up to NV
 
     #------------------------------------------------------------------------------------
 
