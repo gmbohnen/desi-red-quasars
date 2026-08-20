@@ -7,5 +7,5 @@ test.ipynb
 /images
 /pyqso
 current_measurement_test_func.py
-/data/batches
+/data/results/batches
 /data/spectra.h5
