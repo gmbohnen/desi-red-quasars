@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
         toc = time.time() - tic
 
-        print(f"Round {r} finished in {toc/60:.2f} minutes.")
+        print(f"Round {r+1} finished in {toc/60:.2f} minutes.")
 
     tuc = time.time() - tac
 
