@@ -39,9 +39,12 @@ def pipeline(idx,verbose=False):
 
     #------------------------------------------------------------------------------------
 
+
     ## FIT CONTINUUM BELOW CIV
-    result_civ_cont, continuum_civ, _ = fit_continuum(lam=lam, flux=flux_clean, ivar=ivar, windows=CIV_CONTINUUM_WINDOWS, lambda_ref=1700.0)
-      
+    try:
+        result_civ_cont, continuum_civ, _ = fit_continuum(lam=lam, flux=flux_clean, ivar=ivar, windows=CIV_CONTINUUM_WINDOWS, lambda_ref=1700.0)
+    except:
+        return {"targetid":idx,"rew_civ":"continuum fit failed"}
 
     ## FIT CIV LINE
 
