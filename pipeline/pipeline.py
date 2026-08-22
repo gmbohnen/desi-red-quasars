@@ -74,7 +74,7 @@ def pipeline(idx,verbose=False):
     ## NV PROFILE
 
     # make LYA mask
-    lya_mask = make_scaling_mask(lam=lam, profile_civ=profile_civ)
+    lya_mask, lya_mask_lims = make_scaling_mask(lam=lam, profile_civ=profile_civ, lims=True)
 
     # fit NV by scaling CIV template
     result_nv, profile_nv = scale_civ_to_nv(lam=lam, flux_sub=flux_sub_nv_lya, params_dict=params_dict_civ, accept_two=accept_two_civ, ivar=ivar, mask=lya_mask)
@@ -194,7 +194,7 @@ def pipeline(idx,verbose=False):
 
         # NV line fit details
         "line_fit_nv": {
-            "lya_mask":             lya_mask,
+            "lya_mask":             lya_mask_lims,
             "redchi":               result_nv.redchi,
             "fit_params":           result_nv.params.valuesdict()
             },
