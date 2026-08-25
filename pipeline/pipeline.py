@@ -145,14 +145,14 @@ def pipeline(idx,verbose=False):
 
         # REW
         "rew_civ":                  line_stats_civ["ew_aa"],
-        "rew_nv":                   line_stats_nv["ew_aa"],
-        "rew_lya":                  line_stats_lya["ew_aa"],
+        "rew_nv":                   np.nan,
+        "rew_lya":                  np.nan,
 
         # SNR
         "snr_1700A":                snr_1700,
         "snr_civ":                  snr_civ,
-        "snr_nv":                   snr_nv,
-        "snr_lya":                  snr_lya,
+        "snr_nv":                   np.nan,
+        "snr_lya":                  np.nan,
 
         # ratio of pixels used in fits
         "pixel_used_civ":           civ_pixel_used,
