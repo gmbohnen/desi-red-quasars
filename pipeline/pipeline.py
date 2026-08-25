@@ -114,6 +114,11 @@ def pipeline(idx,verbose=False):
     result_civ = result2_civ if accept_two_civ else result1_civ
     params_dict_civ = result_civ.params.valuesdict()
 
+    # additional measurements
+    snr_1700 = snr_around_lam(lam=lam, flux=flux_sub_civ, noise=noise, ref_lam=1700)
+    snr_civ = snr_around_lam(lam=lam, flux=flux_sub_civ, noise=noise, ref_lam=CIV_AIR)
+    civ_pixel_used = pixel_used_in_window(lam=lam, mask=civ_absorption_mask, lower_lim=CIV_FIT_WINDOW[0], upper_lim=CIV_FIT_WINDOW[1])
+
     #------------------------------------------------------------------------------------
 
     ## CONTINUUM BELOW NV AND LYA
@@ -128,7 +133,73 @@ def pipeline(idx,verbose=False):
     lya_mask, lya_mask_lims = make_scaling_mask(lam=lam, profile_civ=profile_civ, lims=True)
 
     # fit NV by scaling CIV template
-    result_nv, profile_nv = scale_civ_to_nv(lam=lam, flux_sub=flux_sub_nv_lya, params_dict=params_dict_civ, accept_two=accept_two_civ, ivar=ivar, mask=lya_mask)
+    result_nv, profile_nv = scale_civ_to_nv(lam=lam, flux_sub=flux_sub_nv_lya, params_dict=params_dict_civ, accept_two=accept_two_civ, ivar=ivar, mask=lya_mask, verbose=False)
+
+    if result_nv is None:
+        return {
+        "targetid":                 idx,
+
+        # REW
+        "rew_civ":                  line_stats_civ["ew_aa"],
+        "rew_nv":                   line_stats_nv["ew_aa"],
+        "rew_lya":                  line_stats_lya["ew_aa"],
+
+        # SNR
+        "snr_1700A":                snr_1700,
+        "snr_civ":                  snr_civ,
+        "snr_nv":                   snr_nv,
+        "snr_lya":                  snr_lya,
+
+        # ratio of pixels used in fits
+        "pixel_used_civ":           civ_pixel_used,
+        "pixel_used_blue_end_lya":  np.nan,
+
+        # continuum reduced chi square
+        "continuum_redchi":         result_lya_nv_cont.redchi,
+
+        
+        # other line measurements
+        "measurements_civ": {
+            "integration_window":   civ_integration_win,
+            "further_measurements": line_stats_civ
+            },
+        "measurements_nv":          np.nan,
+        "measurements_lya":         np.nan,
+            
+        # CIV continuum fit details
+        "continuum_fit_civ": {
+            "redchi":               result_civ_cont.redchi,
+            "fit_params":           result_civ_cont.params.valuesdict()
+            },
+
+        # CIV absorption details
+        "absorption_civ": {
+            "intervals":            civ_absorption_intervals,
+            "blue_detected":        civ_blue_absorption_detected,
+            "center_detected":      civ_center_absorption_detected
+            },
+        
+        # CIV line fit details
+        "line_fit_civ": {
+            "accept_two":           accept_two_civ,
+            "p_val":                p_val_civ,
+            "redchi":               result_civ.redchi,
+            "fit_params":           params_dict_civ
+            },
+
+        # LYA & NV continuum fit details
+        "continuum_fit_lya_nv":     np.nan,
+
+        # NV line fit details
+        "line_fit_nv":              np.nan,
+
+        # LYA absorption details
+        "absorption_lya":           np.nan,
+
+        # LYA line fit details
+        "line_fit_lya":             np.nan
+
+        }
 
 
     ## LYA PROFILE
@@ -150,6 +221,11 @@ def pipeline(idx,verbose=False):
     profile_lya = profile2_lya if accept_two_lya else profile1_lya
     result_lya = result2_lya if accept_two_lya else result1_lya
 
+    # additional measurements
+    snr_nv = snr_around_lam(lam=lam, flux=flux_sub_nv_lya, noise= noise, ref_lam=NV_AIR)
+    snr_lya = snr_around_lam(lam=lam, flux=flux_sub_nv_lya, noise=noise, ref_lam=LYA_AIR)
+    lya_blue_end_pixel_used = pixel_used_in_window(lam=lam, mask=lya_absorption_mask, lower_lim=LYA_NV_FIT_WINDOW[0], upper_lim=NV_AIR)  # only consider the left part of the fit window, up to NV
+
     #------------------------------------------------------------------------------------
 
     ## LINE MEASUREMENT
@@ -164,21 +240,9 @@ def pipeline(idx,verbose=False):
     # LYA
     line_stats_lya, lya_integration_win = measure_line(lam=lam, profile=profile_lya, flux_sub=flux_sub_lya, continuum=continuum_nv_lya, window=LYA_NV_FIT_WINDOW, get_window=True, verbose=verbose)
 
-    #------------------------------------------------------------------------------------
-
-    ## ADDITIONAL METRICS
-
-    # signal-to-noise ratio at each line + 1700A
-    snr_1700 = snr_around_lam(lam=lam, flux=flux_sub_civ, noise=noise, ref_lam=1700)
-    snr_civ = snr_around_lam(lam=lam, flux=flux_sub_civ, noise=noise, ref_lam=CIV_AIR)
-    snr_nv = snr_around_lam(lam=lam, flux=flux_sub_nv_lya, noise= noise, ref_lam=NV_AIR)
-    snr_lya = snr_around_lam(lam=lam, flux=flux_sub_nv_lya, noise=noise, ref_lam=LYA_AIR)
-
-    # ratio of pixels used in fits for validation
-    civ_pixel_used = pixel_used_in_window(lam=lam, mask=civ_absorption_mask, lower_lim=CIV_FIT_WINDOW[0], upper_lim=CIV_FIT_WINDOW[1])
-    lya_blue_end_pixel_used = pixel_used_in_window(lam=lam, mask=lya_absorption_mask, lower_lim=LYA_NV_FIT_WINDOW[0], upper_lim=NV_AIR)  # only consider the left part of the fit window, up to NV
 
     #------------------------------------------------------------------------------------
+
 
     results = {
         "targetid":                 idx,

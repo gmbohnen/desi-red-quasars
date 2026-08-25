@@ -29,13 +29,16 @@ def _make_nv_model(civ_params,two_gaussians):
     return nv_model
 
 
-def scale_civ_to_nv(lam,flux_sub,params_dict,accept_two,ivar=None,mask=None,fit_window=LYA_NV_FIT_WINDOW):
+def scale_civ_to_nv(lam,flux_sub,params_dict,accept_two,ivar=None,mask=None,fit_window=LYA_NV_FIT_WINDOW,verbose=True):
         win = (lam > fit_window[0]) & (lam < fit_window[1])
 
         if mask is not None:
             win &= ~mask
         if win.sum() < 8:
-            raise ValueError("Too few pixels for scaling.")
+            if verbose:
+                raise ValueError("Too few pixels for scaling.")
+            else:
+                return None, None
 
         xd = lam[win]
         yd = flux_sub[win]
