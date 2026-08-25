@@ -44,7 +44,55 @@ def pipeline(idx,verbose=False):
     try:
         result_civ_cont, continuum_civ, _ = fit_continuum(lam=lam, flux=flux_clean, ivar=ivar, windows=CIV_CONTINUUM_WINDOWS, lambda_ref=1700.0)
     except:
-        return {"targetid":idx,"rew_civ":"continuum fit failed"}
+        return {
+        "targetid":                 idx,
+
+        # REW
+        "rew_civ":                  np.nan,
+        "rew_nv":                   np.nan,
+        "rew_lya":                  np.nan,
+
+        # SNR
+        "snr_1700A":                np.nan,
+        "snr_civ":                  np.nan,
+        "snr_nv":                   np.nan,
+        "snr_lya":                  np.nan,
+
+        # ratio of pixels used in fits
+        "pixel_used_civ":           np.nan,
+        "pixel_used_blue_end_lya":  np.nan,
+
+        # continuum reduced chi square
+        "continuum_redchi":         np.nan,
+
+
+        # other line measurements
+        "measurements_civ":         np.nan,
+        "measurements_nv":          np.nan,
+        "measurements_lya":         np.nan,
+        
+        # CIV continuum fit details
+        "continuum_fit_civ":        np.nan,
+
+        # CIV absorption details
+        "absorption_civ":           np.nan,
+        
+        # CIV line fit details
+        "line_fit_civ":             np.nan,
+
+        # LYA & NV continuum fit details
+        "continuum_fit_lya_nv":     np.nan,
+
+        # NV line fit details
+        "line_fit_nv":              np.nan,
+
+        # LYA absorption details
+        "absorption_lya":           np.nan,
+
+        # LYA line fit details
+        "line_fit_lya":             np.nan
+
+        }
 
     ## FIT CIV LINE
 
@@ -215,7 +263,7 @@ def pipeline(idx,verbose=False):
             "p_val":                p_val_lya,
             "redchi":               result_lya.redchi,
             "fit_params":           result_lya.params.valuesdict()
-            },    
+            }
 
         }
 
