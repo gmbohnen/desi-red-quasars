@@ -19,7 +19,7 @@ def get_args_list(batch_size,n_worker):
         with open(f"{PROCESSED_PATH}/{elem}","r") as f:
             processed_ids.extend([line.strip() for line in f if line.strip()])
 
-    unprocessed_ids = [elem for elem in all_ids if str(elem) not in processed_ids]
+    unprocessed_ids = list(set(all_ids) - set(processed_ids)) #[elem for elem in all_ids if str(elem) not in processed_ids]
 
     args_list = []
 
