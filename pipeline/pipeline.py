@@ -114,10 +114,14 @@ def pipeline(idx,verbose=False):
     result_civ = result2_civ if accept_two_civ else result1_civ
     params_dict_civ = result_civ.params.valuesdict()
 
-    # additional measurements
+    # measure line
+    line_stats_civ, civ_integration_win = measure_line(lam=lam, profile=profile_civ, flux_sub=flux_sub_civ, continuum=continuum_civ, window=CIV_FIT_WINDOW,get_window=True, verbose=verbose) 
+
+    # additional metrics
     snr_1700 = snr_around_lam(lam=lam, flux=flux_sub_civ, noise=noise, ref_lam=1700)
     snr_civ = snr_around_lam(lam=lam, flux=flux_sub_civ, noise=noise, ref_lam=CIV_AIR)
     civ_pixel_used = pixel_used_in_window(lam=lam, mask=civ_absorption_mask, lower_lim=CIV_FIT_WINDOW[0], upper_lim=CIV_FIT_WINDOW[1])
+
 
     #------------------------------------------------------------------------------------
 
@@ -221,24 +225,15 @@ def pipeline(idx,verbose=False):
     profile_lya = profile2_lya if accept_two_lya else profile1_lya
     result_lya = result2_lya if accept_two_lya else result1_lya
 
-    # additional measurements
+    # measure lines
+    flux_sub_nv = flux_sub_nv_lya - profile_lya  # subtract LYA profile
+    line_stats_nv, nv_integration_win = measure_line(lam=lam, profile=profile_nv, flux_sub=flux_sub_nv, continuum=continuum_nv_lya, window=LYA_NV_FIT_WINDOW, get_window=True, verbose=verbose)
+    line_stats_lya, lya_integration_win = measure_line(lam=lam, profile=profile_lya, flux_sub=flux_sub_lya, continuum=continuum_nv_lya, window=LYA_NV_FIT_WINDOW, get_window=True, verbose=verbose)
+
+    # additional metrics
     snr_nv = snr_around_lam(lam=lam, flux=flux_sub_nv_lya, noise= noise, ref_lam=NV_AIR)
     snr_lya = snr_around_lam(lam=lam, flux=flux_sub_nv_lya, noise=noise, ref_lam=LYA_AIR)
     lya_blue_end_pixel_used = pixel_used_in_window(lam=lam, mask=lya_absorption_mask, lower_lim=LYA_NV_FIT_WINDOW[0], upper_lim=NV_AIR)  # only consider the left part of the fit window, up to NV
-
-    #------------------------------------------------------------------------------------
-
-    ## LINE MEASUREMENT
-
-    # CIV
-    line_stats_civ, civ_integration_win = measure_line(lam=lam, profile=profile_civ, flux_sub=flux_sub_civ, continuum=continuum_civ, window=CIV_FIT_WINDOW,get_window=True, verbose=verbose) 
-
-    # NV
-    flux_sub_nv = flux_sub_nv_lya - profile_lya  # subtract LYA profile
-    line_stats_nv, nv_integration_win = measure_line(lam=lam, profile=profile_nv, flux_sub=flux_sub_nv, continuum=continuum_nv_lya, window=LYA_NV_FIT_WINDOW, get_window=True, verbose=verbose)
-
-    # LYA
-    line_stats_lya, lya_integration_win = measure_line(lam=lam, profile=profile_lya, flux_sub=flux_sub_lya, continuum=continuum_nv_lya, window=LYA_NV_FIT_WINDOW, get_window=True, verbose=verbose)
 
 
     #------------------------------------------------------------------------------------
