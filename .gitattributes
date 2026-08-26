@@ -1,3 +1,4 @@
 data/results.csv filter=lfs diff=lfs merge=lfs -text
 data/target_properties.csv filter=lfs diff=lfs merge=lfs -text
 data/target_properties_v2.csv filter=lfs diff=lfs merge=lfs -text
+data/fit_params.csv filter=lfs diff=lfs merge=lfs -text
