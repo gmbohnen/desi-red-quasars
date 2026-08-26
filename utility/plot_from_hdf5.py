@@ -14,7 +14,7 @@ SPECTRA_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/spectra.h5"
 FIT_PARAMS_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/fit_params.csv"
 
 
-def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_strength=3):
+def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_strength=3, title=""):
     targetid = str(targetid)
 
     with h5py.File(SPECTRA_PATH, "r") as f:
@@ -112,5 +112,6 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
         additional_lam=[lya_nv_lam, lya_nv_lam, civ_lam],
         additional_flux=[lya_profile, nv_profile, civ_profile],
         additional_flux_color=[palette_dark[0],palette_dark[2],palette_dark[1]],
-        line_width_factor=2
+        line_width_factor=2,
+        title=title
         )
