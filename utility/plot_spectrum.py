@@ -121,10 +121,12 @@ def plot_spectrum(lam, flux,
             
         if additional_lam is not None:
             for i in range(len(additional_flux)):
-                plt.plot(additional_lam[i], additional_flux[i], linewidth=0.8*line_width_factor, color=additional_flux_color[i], label=additional_flux_label[i])
+                if additional_flux[i] is not None:
+                    plt.plot(additional_lam[i], additional_flux[i], linewidth=line_width_factor, color=additional_flux_color[i], label=additional_flux_label[i])
         else:
             for i in range(len(additional_flux)):
-                plt.plot(lam, additional_flux[i], linewidth=0.8*line_width_factor, color=additional_flux_color[i], label=additional_flux_label[i])
+                if additional_flux[i] is not None:
+                    plt.plot(lam, additional_flux[i], linewidth=line_width_factor, color=additional_flux_color[i], label=additional_flux_label[i])
 
 
     # plot vertical lines if specified
