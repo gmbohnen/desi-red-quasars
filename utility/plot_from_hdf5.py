@@ -11,7 +11,7 @@ import h5py
 import ast
 
 SPECTRA_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/spectra.h5"
-FIT_PARAMS_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/fit_params.csv"
+DETAILS_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/result_details.csv"
 
 
 def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_strength=3, title=""):
@@ -26,13 +26,14 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
 
     # load dataframe if it not given
     if (CIV or NV or LYA) and (df is None):
-        df = pd.read_csv(FIT_PARAMS_PATH,index_col="targetid",dtype={"targetid":"str"})
+        df = pd.read_csv(DETAILS_PATH,index_col="targetid",dtype={"targetid":"str"})
 
     #---------------------------------------------------------------------------------------
 
     if CIV:
         # load civ params
         civ_params = ast.literal_eval(df.loc[targetid,"line_fit_civ"])
+        civ_integration_window = ast.literal_eval(df.loc[targetid,"measurements_civ"])["integration_window"]
 
         # create profile
         if civ_params["accept_two"]:
@@ -48,7 +49,7 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
         civ_profile += civ_cont_profile
 
         # create arrays to plot later
-        civ_mask = (lam > CIV_FIT_WINDOW[0]) & (lam < CIV_FIT_WINDOW[1])
+        civ_mask = (lam > civ_integration_window[0]) & (lam < civ_integration_window[1])
         civ_lam = lam[civ_mask]
         civ_profile = civ_profile[civ_mask]
 
@@ -61,10 +62,8 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
     # create continuum below NV and LYA
     if NV or LYA:
         cont_params = ast.literal_eval(df.loc[targetid,"continuum_fit_lya_nv"])
+        
         cont_profile = cont_params["fit_params"]["amplitude"] * ((lam / 1290.0) ** cont_params["fit_params"]["alpha"])
-
-        lya_nv_mask = (lam > LYA_NV_FIT_WINDOW[0]) & (lam < LYA_NV_FIT_WINDOW[1])
-        lya_nv_lam = lam[lya_nv_mask]
 
     else:
         lya_nv_lam = None
@@ -73,6 +72,7 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
 
     if NV:
         nv_params = ast.literal_eval(df.loc[targetid,"line_fit_nv"])
+        nv_integration_window = ast.literal_eval(df.loc[targetid,"measurements_nv"])["integration_window"]
 
         if "civ_params" not in locals():  # get CIV values if it does not yet exist
             civ_params = ast.literal_eval(df.loc[targetid,"line_fit_civ"])
@@ -82,7 +82,10 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
 
         nv_profile += cont_profile  # add continuum to line profile
         
-        nv_profile = nv_profile[lya_nv_mask]  # create array to plot later
+        # create arrays to plot later
+        nv_mask = (lam > nv_integration_window[0]) & (lam < nv_integration_window[1])
+        nv_lam = lam[nv_mask]
+        nv_profile = nv_profile[nv_mask]
 
     else:
         nv_profile = None
@@ -91,6 +94,7 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
 
     if LYA:
         lya_params = ast.literal_eval(df.loc[targetid,"line_fit_lya"])
+        lya_integration_window = ast.literal_eval(df.loc[targetid,"measurements_lya"])["integration_window"]
 
         # create profile
         if lya_params["accept_two"]:
@@ -100,7 +104,11 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
 
         lya_profile += cont_profile  # add continuum to line profile
 
-        lya_profile = lya_profile[lya_nv_mask]  # create array to plot later
+        # create arrays to plot later
+        lya_mask = (lam > lya_integration_window[0]) & (lam < lya_integration_window[1])
+        lya_lam = lam[lya_mask]
+        lya_profile = lya_profile[lya_mask]
+
 
     else:
         lya_profile = None
@@ -109,7 +117,7 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
 
     plot_spectrum(lam,convolve(flux,Box1DKernel(smoothing_strength)),
         color="black",
-        additional_lam=[lya_nv_lam, lya_nv_lam, civ_lam],
+        additional_lam=[lya_lam, nv_lam, civ_lam],
         additional_flux=[lya_profile, nv_profile, civ_profile],
         additional_flux_color=[palette_dark[0],palette_dark[2],palette_dark[1]],
         line_width_factor=2,
