@@ -16,7 +16,7 @@ def _profile_width(lam, profile, level):
     return lam_right - lam_left
 
 
-def _kt80(lam, profile):
+def _kt80(lam, profile, line_aa=None):
     '''
     Kurtosis index:
     kt80 = Dv(80%) / Dv(20%)
@@ -32,8 +32,8 @@ def _kt80(lam, profile):
     dv_20 = _profile_width(lam, profile, 0.20 * peak)
 
     # convert to km/s
-    dv_80_kms = C_KMS * dv_80 / CIV_AIR
-    dv_20_kms = C_KMS * dv_20 / CIV_AIR
+    dv_80_kms = C_KMS * dv_80 / line_aa
+    dv_20_kms = C_KMS * dv_20 / line_aa
 
     if np.isnan(dv_80_kms) or np.isnan(dv_20_kms) or dv_80_kms <= 0:
         return np.nan
@@ -57,7 +57,7 @@ def lam_to_vel(lam, lam0=CIV_AIR):
     return C_KMS * (lam - lam0) / lam0
 
 
-def measure_line(lam, profile, flux_sub, continuum, window=CIV_FIT_WINDOW, get_window=False,verbose=True):
+def measure_line(lam, profile, flux_sub, continuum, window=CIV_FIT_WINDOW, line_aa=None, get_window=False,verbose=True):
     ci = get_ci(lam,profile)
 
     # integration window constraints
@@ -85,7 +85,7 @@ def measure_line(lam, profile, flux_sub, continuum, window=CIV_FIT_WINDOW, get_w
     fc = continuum[win] if continuum is not None else np.ones(win.sum())
 
     fwhm_aa      = _profile_width(w, p, 0.5 * p.max())
-    fwhm_kms     = C_KMS * fwhm_aa / CIV_AIR
+    fwhm_kms     = C_KMS * fwhm_aa / line_aa
 
     centroid_aa  = np.trapz(w * p, w) / np.trapz(p, w)
     centroid_kms = lam_to_vel(centroid_aa)
@@ -99,7 +99,7 @@ def measure_line(lam, profile, flux_sub, continuum, window=CIV_FIT_WINDOW, get_w
     ew_aa = np.trapz(ew_integrand, w)
     fit_rew = np.trapz(fit_integrand, w)
 
-    kt80 = _kt80(w, p)
+    kt80 = _kt80(w, p, line_aa=line_aa)
 
     integration_limits = (w[0],w[-1])
 
