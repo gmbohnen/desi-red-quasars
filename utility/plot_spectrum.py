@@ -35,7 +35,7 @@ def plot_spectrum(lam, flux,
     # shaded regions
     shaded_regions=None, shaded_regions_colors=["lime","maroon"], shaded_regions_label=None,
     # other
-    xlim=None, ylim=None, line_width_factor=1, latex_font=True):
+    xlim=None, ylim=None, line_width_factor=1, figsize_scale=1, latex_font=True):
     '''
     Plot spectrum.
 
@@ -101,7 +101,7 @@ def plot_spectrum(lam, flux,
     if latex_font:
         plt.rcParams.update(**font_settings)
 
-    plt.subplots(figsize=(15,8))  
+    plt.subplots(figsize=(15*figsize_scale,8*figsize_scale))  
 
 
     # plot primary flux
