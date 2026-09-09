@@ -16,9 +16,12 @@ settings = {
         'ytick.major.size':6.0,
         'ytick.minor.size':4.0,
         'legend.frameon':False,
-        'mathtext.fontset':'stix',
-        'font.family':'STIXGeneral'
     }
+
+font_settings = {
+    'mathtext.fontset':'stix',
+    'font.family':'STIXGeneral'
+}
 
 
 def plot_spectrum(lam, flux,
@@ -32,7 +35,7 @@ def plot_spectrum(lam, flux,
     # shaded regions
     shaded_regions=None, shaded_regions_colors=["lime","maroon"], shaded_regions_label=None,
     # other
-    xlim=None, ylim=None, line_width_factor=1):
+    xlim=None, ylim=None, line_width_factor=1, latex_font=True):
     '''
     Plot spectrum.
 
@@ -94,6 +97,9 @@ def plot_spectrum(lam, flux,
 
 
     plt.rcParams.update(**settings)  # update settings to apply styles
+
+    if latex_font:
+        plt.rcParams.update(**font_settings)
 
     plt.subplots(figsize=(15,8))  
 
