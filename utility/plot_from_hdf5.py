@@ -14,7 +14,7 @@ SPECTRA_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/spectra.h5"
 DETAILS_PATH = "/home/leya/Code/Uni/desi-red-quasars/data/result_details.csv"
 
 
-def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_strength=3, title=""):
+def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_strength=3, **kwargs):
     targetid = str(targetid)
 
     with h5py.File(SPECTRA_PATH, "r") as f:
@@ -65,8 +65,9 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
         
         cont_profile = cont_params["fit_params"]["amplitude"] * ((lam / 1290.0) ** cont_params["fit_params"]["alpha"])
 
-    else:
-        lya_nv_lam = None
+    # else:
+    #     lya_lam = None
+    #     nv_lam = None
 
     #---------------------------------------------------------------------------------------
 
@@ -89,6 +90,7 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
 
     else:
         nv_profile = None
+        nv_lam = None
 
     #---------------------------------------------------------------------------------------
 
@@ -112,6 +114,7 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
 
     else:
         lya_profile = None
+        lya_lam = None
 
     #---------------------------------------------------------------------------------------
 
@@ -121,5 +124,5 @@ def plot_from_hdf5(targetid, df=None, CIV=False, NV=False, LYA=False, smoothing_
         additional_flux=[lya_profile, nv_profile, civ_profile],
         additional_flux_color=[palette_dark[0],palette_dark[2],palette_dark[1]],
         line_width_factor=2,
-        title=title
+        **kwargs
         )
