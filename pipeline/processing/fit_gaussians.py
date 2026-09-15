@@ -43,7 +43,7 @@ def fit_single_gaussian(lam, flux_sub, ivar=None, mask=None, window=CIV_FIT_WIND
 
 ## two gaussians
 
-def _two_gaussian(x, amp_c, cen_c, sigma_c, amp_w, cen_w, sigma_w):
+def _two_gaussian(x, amp_c, cen_c, sigma_c, amp_w, cen_w, sigma_w,**kwargs):
     core = _gaussian(x, amp_c, cen_c, sigma_c)
     wing = _gaussian(x, amp_w, cen_w, sigma_w)
     return core + wing
