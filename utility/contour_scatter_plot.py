@@ -37,7 +37,7 @@ def contour_scatter_plot(df,x,y="z-w3",y_threshold=3.9,y_threshold_label="ERQ th
         sns.scatterplot(data=temp,x=x,y=y,s=4,alpha=0.9,ax=ax,color="red")
 
     if y_threshold is not None:
-        plt.axhline(3.9,label=y_threshold_label,linestyle="--",color="DodgerBlue")
+        plt.axhline(y_threshold,label=y_threshold_label,linestyle="--",color="DodgerBlue")
 
     ax.set_xlabel(x_label if x_label is not None else x)
     ax.set_ylabel(y_label if y_label is not None else y)
