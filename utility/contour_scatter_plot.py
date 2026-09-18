@@ -6,7 +6,7 @@ import seaborn as sns
 from scipy.stats import gaussian_kde
 
 
-def contour_scatter_plot(df,x,y="z-w3",y_threshold=3.9,y_threshold_label="ERQ threshold",subsample_col="rew_civ",subsample_cutoff=100,contour_levels=[25,55,85],figsize=(8,6),x_label=None,y_label=None,lower_x_lim=None,upper_x_lim=None,save_path=None,x_log=False,y_log=False,ax=None):
+def contour_scatter_plot(df,x,y="z-w3",y_threshold=3.9,y_threshold_label="ERQ threshold",subsample_col="rew_civ",subsample_cutoff=100,contour_levels=[25,55,85],figsize=(8,6),x_label=None,y_label=None,lower_x_lim=None,upper_x_lim=None,save_path=None,x_log=False,y_log=False,ax=None,subsample_color="red",threshold_color="DodgerBlue"):
     density_df = df[[x,y]].copy()
 
     coords = density_df.values.T
@@ -34,10 +34,10 @@ def contour_scatter_plot(df,x,y="z-w3",y_threshold=3.9,y_threshold_label="ERQ th
 
     if subsample_col is not None:
         temp = df[df[subsample_col] > subsample_cutoff]
-        sns.scatterplot(data=temp,x=x,y=y,s=4,alpha=0.9,ax=ax,color="red")
+        sns.scatterplot(data=temp,x=x,y=y,s=4,alpha=0.9,ax=ax,color=subsample_color)
 
     if y_threshold is not None:
-        plt.axhline(y_threshold,label=y_threshold_label,linestyle="--",color="DodgerBlue")
+        ax.axhline(y_threshold,label=y_threshold_label,linestyle="--",color=threshold_color)
 
     ax.set_xlabel(x_label if x_label is not None else x)
     ax.set_ylabel(y_label if y_label is not None else y)
