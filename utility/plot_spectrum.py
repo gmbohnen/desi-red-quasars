@@ -157,7 +157,7 @@ def plot_spectrum(lam, flux,
             plt.axvspan(region[0],region[1],label=shaded_regions_label[i],color=shaded_regions_colors[i], alpha=0.3)
 
     plt.title(title)
-    plt.xlabel(r"$\lambda$ [$\AA$]")
+    plt.xlabel(r"Wavelength [$\AA$]")
     plt.ylabel(r"$F_{\lambda}~[10^{-17}~ergs~s^{-1}~cm^{-2}~{\AA}^{-1}]$")
 
     handles, labels = plt.gca().get_legend_handles_labels()
