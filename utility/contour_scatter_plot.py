@@ -6,7 +6,7 @@ import seaborn as sns
 from scipy.stats import gaussian_kde
 
 
-def contour_scatter_plot(df,x,y="z-w3",y_threshold=3.9,y_threshold_label="ERQ threshold",subsample_col="rew_civ",subsample_cutoff=100,contour_levels=[25,55,85],figsize=(8,6),x_label=None,y_label=None,lower_x_lim=None,upper_x_lim=None,save_path=None,x_log=False,y_log=False,ax=None,subsample_color="red",threshold_color="DodgerBlue"):
+def contour_scatter_plot(df,x,y="z-w3",y_threshold=3.9,y_threshold_label="ERQ threshold",subsample_col="rew_civ",subsample_cutoff=100,contour_levels=[25,55,85],figsize=(8,6),x_label=None,y_label=None,lower_x_lim=None,upper_x_lim=None,save_path=None,x_log=False,y_log=False,ax=None,subsample_color="red",threshold_color="DodgerBlue",show=False):
     density_df = df[[x,y]].copy()
 
     coords = density_df.values.T
@@ -60,4 +60,5 @@ def contour_scatter_plot(df,x,y="z-w3",y_threshold=3.9,y_threshold_label="ERQ th
     if save_path is not None:
         plt.savefig(save_path)
     
-    plt.plot()
+    if show:
+        plt.show()
