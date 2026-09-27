@@ -1,0 +1,10 @@
+- ``run_pipeline.py`` is the main file to run the pipeline
+-  ``pipeline/processing`` directory contains the actual processing functions
+-----
+- ``inspect_object_properties.ipynb``and ``spectra_retrieval_preprocessing.ipynb`` contain prefiltering data retrieval, respectively
+- ``extract_results.ipynb`` processes the pipeline outputs
+- analysis and plotting over the rest of the notebooks
+- ``data``directory contains ``results.csv`` and ``result_details.csv`` contain main measurements and details (including fit parameters and absorption), respectively
+-----
+- ``utility`` directory contains plotting functions and small general utility
+- ``archive`` directory contains notebooks used for reproducing of original BOSS core ERQ measurements
